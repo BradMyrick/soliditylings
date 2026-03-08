@@ -1,0 +1,7 @@
+[profile.default]
+src = "exercises"
+out = "out"
+libs = ["lib"]
+test = "exercises"
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

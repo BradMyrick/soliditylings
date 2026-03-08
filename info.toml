@@ -1,0 +1,14 @@
+[[exercises]]
+name = "intro1"
+path = "exercises/00_intro/intro1.sol"
+mode = "compile"
+hint = """
+Just run the exercise to see the welcome message!
+Fix the syntax error to progress."""
+
+[[exercises]]
+name = "intro2"
+path = "exercises/00_intro/intro2.sol"
+mode = "test"
+hint = """
+Another easy one! Look closely at the function."""
