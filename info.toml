@@ -12,3 +12,129 @@ path = "exercises/00_intro/intro2.sol"
 mode = "test"
 hint = """
 Another easy one! Look closely at the function."""
+
+[[exercises]]
+name = "variables1"
+path = "exercises/01_variables/variables1.sol"
+mode = "compile"
+hint = """
+You just need to declare the variable without initializing it.
+Remember to include the type `uint256` and the visibility `public`."""
+
+[[exercises]]
+name = "variables2"
+path = "exercises/01_variables/variables2.sol"
+mode = "compile"
+hint = """
+Declare an `address` variable named `owner` and make it `public`."""
+
+[[exercises]]
+name = "variables3"
+path = "exercises/01_variables/variables3.sol"
+mode = "test"
+hint = """
+Use `uint256 public constant MAX_SUPPLY = 10000;`."""
+
+[[exercises]]
+name = "functions1"
+path = "exercises/02_functions/functions1.sol"
+mode = "test"
+hint = """
+A function definition looks like:
+function myFunc() public pure returns (string memory) { ... }"""
+
+[[exercises]]
+name = "functions2"
+path = "exercises/02_functions/functions2.sol"
+mode = "compile"
+hint = """
+You need to add `public` or `external` to the function definition."""
+
+[[exercises]]
+name = "functions3"
+path = "exercises/02_functions/functions3.sol"
+mode = "compile"
+hint = """
+Since the function reads state (`value`), it should be `view` instead of `pure`."""
+
+[[exercises]]
+name = "arrays1"
+path = "exercises/03_collections/arrays1.sol"
+mode = "compile"
+hint = """
+Declare it as: `uint256[] public numbers;`
+And push with: `numbers.push(number);`"""
+
+[[exercises]]
+name = "mappings1"
+path = "exercises/03_collections/mappings1.sol"
+mode = "compile"
+hint = """
+Declare it as: `mapping(address => uint256) public balances;`
+And assign with: `balances[user] = amount;`"""
+
+[[exercises]]
+name = "mappings2"
+path = "exercises/03_collections/mappings2.sol"
+mode = "compile"
+hint = """
+Declare it as: `mapping(address => mapping(address => uint256)) public allowance;`
+And return with: `return allowance[owner][spender];`"""
+
+[[exercises]]
+name = "structs1"
+path = "exercises/04_advanced_types/structs1.sol"
+mode = "compile"
+hint = """
+Define the struct:
+struct User { string username; uint256 score; }
+And assign it:
+currentUser = User(_username, _score);"""
+
+[[exercises]]
+name = "enums1"
+path = "exercises/04_advanced_types/enums1.sol"
+mode = "compile"
+hint = """
+Define the enum:
+enum State { Pending, Active, Inactive }
+And set it:
+currentState = State.Active;"""
+
+[[exercises]]
+name = "errors1"
+path = "exercises/04_advanced_types/errors1.sol"
+mode = "compile"
+hint = """
+Define it as:
+error Unauthorized(address caller);
+And revert natively:
+if (msg.sender != owner) revert Unauthorized(msg.sender);"""
+
+[[exercises]]
+name = "modifiers1"
+path = "exercises/05_contracts/modifiers1.sol"
+mode = "test"
+hint = """
+modifier onlyOwner() {
+    require(msg.sender == owner, "Not owner");
+    _;
+}
+And add `onlyOwner` to the `changeState` signature."""
+
+[[exercises]]
+name = "inheritance1"
+path = "exercises/05_contracts/inheritance1.sol"
+mode = "compile"
+hint = """
+Use `contract Dog is Animal`
+And `function speak() public pure override returns (string memory)`"""
+
+[[exercises]]
+name = "interfaces1"
+path = "exercises/05_contracts/interfaces1.sol"
+mode = "compile"
+hint = """
+interface IGreeter { function greet() external pure returns (string memory); }
+And call it with: `return IGreeter(target).greet();`"""
+
