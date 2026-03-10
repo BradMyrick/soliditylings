@@ -6,4 +6,3 @@
 
 contract Intro1 {
     // You don't need to do anything here yet, just fix the missing bracket!
-}

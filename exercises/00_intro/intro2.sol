@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 
 contract Intro2 {
     function returnTrue() public pure returns (bool) {
-        return true; // change to what testReturnTrue() expects
+        return false; // change to what testReturnTrue() expects
     }
 }
 

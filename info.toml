@@ -138,3 +138,45 @@ hint = """
 interface IGreeter { function greet() external pure returns (string memory); }
 And call it with: `return IGreeter(target).greet();`"""
 
+[[exercises]]
+name = "memory1"
+path = "exercises/06_memory/memory1.sol"
+mode = "compile"
+hint = """
+Strings and arrays in function arguments must specify their data location. Use `memory`."""
+
+[[exercises]]
+name = "calldata1"
+path = "exercises/06_memory/calldata1.sol"
+mode = "test"
+hint = """
+For external functions, use `calldata` instead of `memory` for array/string arguments to save gas."""
+
+[[exercises]]
+name = "payable1"
+path = "exercises/07_payable/payable1.sol"
+mode = "test"
+hint = """
+Add the `payable` keyword to the function signature and the address variable."""
+
+[[exercises]]
+name = "receive1"
+path = "exercises/07_payable/receive1.sol"
+mode = "test"
+hint = """
+Add `receive() external payable {}` to allow the contract to accept direct ETH transfers."""
+
+[[exercises]]
+name = "events1"
+path = "exercises/08_events/events1.sol"
+mode = "test"
+hint = """
+Declare the event: `event Ping(address indexed sender);`
+And emit it: `emit Ping(msg.sender);`"""
+
+[[exercises]]
+name = "reentrancy1"
+path = "exercises/09_security/reentrancy1.sol"
+mode = "test"
+hint = """
+Update the user's balance *before* making the external call to avoid reentrancy."""

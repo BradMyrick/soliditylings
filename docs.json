@@ -1,0 +1,9 @@
+{
+  "name": "soliditylings",
+  "sidebar": [
+    {
+      "title": "Introduction",
+      "path": "/"
+    }
+  ]
+}

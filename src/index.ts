@@ -231,4 +231,53 @@ program
         });
     });
 
+program
+    .command("verify")
+    .description("Verify all exercises according to the sequence")
+    .action(() => {
+        const exercises = getExercises();
+        const solved = getSolved();
+        
+        programHeader();
+        for (const exercise of exercises) {
+            const success = runExercise(exercise);
+            if (!success) {
+                console.log(chalk.red(`\nVerification failed for ${exercise.path}.`));
+                process.exit(1);
+            }
+            if (!solved.has(exercise.name)) {
+                markSolved(exercise.name);
+            }
+        }
+        console.log(chalk.green(`\n🎉 All exercises verified and completed!`));
+    });
+
+program
+    .command("lsp")
+    .description("Generate remappings.txt for Language Server")
+    .action(() => {
+        const remappings = [
+            "forge-std/=lib/forge-std/src/"
+        ];
+        fs.writeFileSync(path.resolve("remappings.txt"), remappings.join("\n"));
+        console.log(chalk.green("✓ Successfully generated remappings.txt"));
+    });
+
+program
+    .command("init-docs")
+    .description("Initialize docs.json for docs.page setup")
+    .action(() => {
+        const docsJson = {
+            "name": "soliditylings",
+            "sidebar": [
+                {
+                    "title": "Introduction",
+                    "path": "/"
+                }
+            ]
+        };
+        fs.writeFileSync(path.resolve("docs.json"), JSON.stringify(docsJson, null, 2));
+        console.log(chalk.green("✓ Successfully initialized docs.json! Run this again if you need to reset the docs.json file."));
+    });
+
 program.parse(process.argv);
