@@ -1,0 +1,33 @@
+# Getting Started
+
+Getting started with `soliditylings` is easy. Follow the steps below to start completing the exercises on your own machine.
+
+## Installation
+
+Install `soliditylings` globally via `npm` so you can use it anywhere from your terminal:
+
+```shell
+npm install -g .
+```
+
+*Note: You may need node/npm installed if you haven't already.
+
+## First Steps
+
+To run the `soliditylings` application, just use the command:
+
+```shell
+soliditylings watch
+```
+
+This watches for file changes and automatically compiles or tests the current exercise. This is the **recommended** way to run `soliditylings` because your terminal stays open, showing real-time feedback for any bugs or compiler errors you might encounter.
+
+## Editor Support (LSP)
+
+In order to get proper feedback and code intelligence in IDEs like VS Code, initialize your workspace correctly by generating a `remappings.txt` file for Solidity:
+
+```shell
+soliditylings lsp
+```
+
+This enables Language Server Protocol (LSP) support for your code editor so you get rich completions, go-to-definitions, and more!

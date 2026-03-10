@@ -1,0 +1,35 @@
+# Info Schema
+
+Exercises in `soliditylings` are configured declaratively in an `info.toml` struct. Whenever you want to add, subtract, or reorder the training exercises inside of the project, all it takes is editing `info.toml`.
+
+## Structure
+
+The schema relies on an array of `[[exercises]]` objects. Below is a sample block inside the TOML syntax that explains everything about how to configure an exercise:
+
+```toml
+[[exercises]]
+name = "intro1"
+path = "exercises/00_intro/intro1.sol"
+mode = "compile"
+hint = """
+Just run the exercise to see the welcome message!
+Fix the syntax error to progress.
+"""
+```
+
+Each exercise has four main fields.
+
+### `name` 
+(String) The internal reference name for your current exercise. It must be unique across the configuration map.
+
+### `path` 
+(String) An exact path referencing where the underlying `.sol` source code for this specific test case or smart contract file resides within the `/exercises/` structure.
+
+### `mode` 
+(String) Tells the CLI how to handle the file. 
+
+*   **`compile`**: The runner will just try to `solc` compile this file cleanly. Success means zero compiler complaints.
+*   **`test`**: The file requires test cases inside or uses a Forge-like environment. The runner automatically executes the Solidity tests and fails natively if assertions trigger a revert.
+
+### `hint` 
+(String) Information for users when they invoke the `soliditylings hint` command in their terminal, structured exactly as formatted text.

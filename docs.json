@@ -4,6 +4,18 @@
     {
       "title": "Introduction",
       "path": "/"
+    },
+    {
+      "title": "Getting Started",
+      "path": "/getting-started"
+    },
+    {
+      "title": "Commands",
+      "path": "/commands"
+    },
+    {
+      "title": "Info Schema",
+      "path": "/schema"
     }
   ]
 }

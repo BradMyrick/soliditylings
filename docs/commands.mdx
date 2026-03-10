@@ -1,0 +1,33 @@
+# Commands Overview
+
+The `soliditylings` application ships with multiple utility commands to test your exercises, provide hints, reset progress, and more.
+
+## Core Commands
+
+#### `watch`
+Watches for file changes and automatically compiles or tests the current exercise. Keep this running in your background terminal to see real-time errors as you type out fixes.
+
+#### `run [name]`
+Runs the next pending exercise. Optionally, supply a `[name]` argument to focus solely on a particular exercise.
+
+#### `verify`
+Verifies **all** exercises by running them in sequence. It checks compiled bytecodes and runs assertions, stopping at the first failure it finds.
+
+#### `list`
+Lists all the exercises available in `soliditylings` alongside their current completion status! Useful if you want an overview of your progress.
+
+## Support Commands
+
+#### `hint`
+Stuck? Try using the hint command. It will read out exactly what you need to focus on so you aren't stuck on complex syntax.
+
+#### `reset`
+Resets all of your exercise completion state. This is useful for re-doing exercises from scratch or showing the exercises to a friend!
+
+## Development Commands
+
+#### `lsp`
+Generates a `remappings.txt` file which enables Language Server Protocol (LSP) functionality for Solidity plugins. Makes linting work perfectly.
+
+#### `init-docs`
+Scaffolds a basic `docs.json` file designed essentially for compatibility with modern `docs.page` infrastructures, providing you with a sleek documentation sidebar natively.
