@@ -2,20 +2,25 @@
   "name": "soliditylings",
   "sidebar": [
     {
-      "title": "Introduction",
-      "path": "/"
-    },
-    {
-      "title": "Getting Started",
-      "path": "/getting-started"
-    },
-    {
-      "title": "Commands",
-      "path": "/commands"
-    },
-    {
-      "title": "Info Schema",
-      "path": "/schema"
+      "group": "Documentation",
+      "pages": [
+        {
+          "title": "Introduction",
+          "href": "/"
+        },
+        {
+          "title": "Getting Started",
+          "href": "/getting-started"
+        },
+        {
+          "title": "Commands",
+          "href": "/commands"
+        },
+        {
+          "title": "Info Schema",
+          "href": "/schema"
+        }
+      ]
     }
   ]
 }
