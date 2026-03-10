@@ -69,7 +69,7 @@ function saveState(state: State) {
 function runExercise(exercise: Exercise): boolean {
     console.log(chalk.blue(`\nCompiling/Testing ${exercise.path}...`));
     const fullPath = path.resolve(PROJECT_ROOT, exercise.path);
-    const env = { ...process.env, FOUNDRY_TEST: fullPath, FOUNDRY_SRC: fullPath };
+    const env = { ...process.env };
     try {
         if (exercise.mode === "compile") {
             execSync(`forge build ${fullPath}`, { stdio: "pipe", env });
@@ -145,10 +145,19 @@ program
     .description("Reset completed exercises")
     .action(() => {
         const state = getState();
-        // Keep hashes but clear solved list so users have to edit the file to re-solve
         state.solved = [];
+        state.hashes = {};
         saveState(state);
-        console.log(chalk.green("✓ Progress reset successfully! Files will be re-solved once you edit them."));
+
+        try {
+            execSync('git checkout HEAD -- exercises', { 
+                stdio: 'pipe', 
+                cwd: PROJECT_ROOT 
+            });
+            console.log(chalk.green("✓ Progress and files successfully reset to original state!"));
+        } catch (error) {
+            console.log(chalk.yellow("⚠ Progress reset, but could not restore files via git. You may need to revert changes manually."));
+        }
     });
 
 program
@@ -194,8 +203,8 @@ program
             const exercises = getExercises();
             const state = getState();
 
-            // If no current exercise or current is solved, look for the first unsolved
-            if (!currentExercise || state.solved.includes(currentExercise.name)) {
+            // Only find the first unsolved if we don't have a current focus.
+            if (!currentExercise) {
                 currentExercise = exercises.find(e => !state.solved.includes(e.name));
             }
 
@@ -214,24 +223,28 @@ program
                 const currentHash = getFileHash(currentExercise.path);
                 const lastHash = state.hashes[currentExercise.name];
 
-                // Rustlings logic: must have a different hash than the reset hash to move on
-                if (currentHash !== lastHash) {
-                    if (!state.solved.includes(currentExercise.name)) {
-                        state.solved.push(currentExercise.name);
-                        state.hashes[currentExercise.name] = currentHash;
-                        saveState(state);
-                    }
+                if (state.solved.includes(currentExercise.name)) {
+                    // Already solved. Show green solved view.
+                    console.log(chalk.green(`\n✓ Exercise ${currentExercise.name} is solved!`));
+                    console.log(chalk.gray(`\nCommands: [p]revious, [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
+                    isSolvedState = true;
+                } else if (currentHash !== lastHash) {
+                    // New solve!
+                    state.solved.push(currentExercise.name);
+                    state.hashes[currentExercise.name] = currentHash;
+                    saveState(state);
                     console.log(chalk.green(`\n✓ Exercise ${currentExercise.name} solved!`));
-                    console.log(chalk.gray(`\nCommands: [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
+                    console.log(chalk.gray(`\nCommands: [p]revious, [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
                     isSolvedState = true;
                 } else {
+                    // Pending, passes, but no change from before reset.
                     console.log(chalk.yellow(`\n✓ This exercise is technically solved, but you already solved this version.`));
                     console.log(chalk.yellow(`  Please make a change to the file to move forward.`));
-                    console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
+                    console.log(chalk.gray(`\nCommands: [p]revious, [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
                     isSolvedState = false;
                 }
             } else {
-                console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
+                console.log(chalk.gray(`\nCommands: [p]revious, [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
                 isSolvedState = false;
             }
 
@@ -239,19 +252,30 @@ program
             if (pendingRun) runCurrent();
         };
 
-        runCurrent();
+        let debounceTimer: NodeJS.Timeout | null = null;
+        const triggerRun = () => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                runCurrent();
+            }, 100);
+        };
 
-        chokidar.watch(path.resolve(PROJECT_ROOT, "exercises/**/*.sol"), {
-            ignored: /(^|[\/\\])\../,
+        triggerRun();
+
+        chokidar.watch(path.resolve(PROJECT_ROOT, "exercises"), {
+            ignored: /(^|[\/\\])\..|~$|\.swp$/,
             persistent: true,
             ignoreInitial: true,
-            awaitWriteFinish: {
-                stabilityThreshold: 300,
-                pollInterval: 100
+        }).on("all", (event, filePath) => {
+            if (!filePath.endsWith('.sol')) return; 
+            const exercises = getExercises();
+            const absoluteFilePath = path.resolve(filePath);
+            const matchingExercise = exercises.find(e => path.resolve(PROJECT_ROOT, e.path) === absoluteFilePath);
+            
+            if (matchingExercise) {
+                currentExercise = matchingExercise;
             }
-        }).on("all", (event) => {
-            if (event === 'addDir' || event === 'unlinkDir') return;
-            runCurrent();
+            triggerRun();
         });
 
         readline.emitKeypressEvents(process.stdin);
@@ -277,12 +301,23 @@ program
                     console.log(`${chalk.cyan(ex.name.padEnd(25))} ${status}`);
                 });
             } else if (key.name === 'n') {
-                if (isRunning || !isSolvedState) return;
-                // Manual progression to the next unsolved exercise
-                currentExercise = undefined;
-                runCurrent();
+                if (isRunning) return;
+                const exercises = getExercises();
+                const currentIndex = currentExercise ? exercises.findIndex(e => e.name === currentExercise!.name) : -1;
+                if (currentIndex >= 0 && currentIndex < exercises.length - 1) {
+                    currentExercise = exercises[currentIndex + 1];
+                    triggerRun();
+                }
+            } else if (key.name === 'p') {
+                if (isRunning) return;
+                const exercises = getExercises();
+                const currentIndex = currentExercise ? exercises.findIndex(e => e.name === currentExercise!.name) : -1;
+                if (currentIndex > 0) {
+                    currentExercise = exercises[currentIndex - 1];
+                    triggerRun();
+                }
             } else if (key.name === 'r' || key.name === 'return' || key.name === 'enter') {
-                if (!isRunning) runCurrent();
+                if (!isRunning) triggerRun();
             }
         });
     });
