@@ -20,32 +20,61 @@ interface Exercise {
     hint: string;
 }
 
+interface State {
+    solved: string[];
+    hashes: Record<string, string>;
+}
+
+function findRoot(dir: string): string {
+    if (fs.existsSync(path.join(dir, INFO_FILE))) {
+        return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) return process.cwd();
+    return findRoot(parent);
+}
+
+const PROJECT_ROOT = findRoot(process.cwd());
+
+function getFileHash(filePath: string): string {
+    const fullPath = path.resolve(PROJECT_ROOT, filePath);
+    if (!fs.existsSync(fullPath)) return "";
+    const content = fs.readFileSync(fullPath, "utf-8");
+    return require("crypto").createHash("md5").update(content).digest("hex");
+}
+
 function getExercises(): Exercise[] {
-    const data = fs.readFileSync(path.resolve(INFO_FILE), "utf-8");
+    const data = fs.readFileSync(path.resolve(PROJECT_ROOT, INFO_FILE), "utf-8");
     const parsed = toml.parse(data);
     return parsed.exercises as Exercise[];
 }
 
-function getSolved(): Set<string> {
-    const statePath = path.resolve(STATE_FILE);
-    if (!fs.existsSync(statePath)) return new Set();
-    const contents = fs.readFileSync(statePath, "utf-8");
-    return new Set(contents.split("\n").map(l => l.trim()).filter(l => l));
+function getState(): State {
+    const statePath = path.resolve(PROJECT_ROOT, STATE_FILE);
+    if (!fs.existsSync(statePath)) {
+        return { solved: [], hashes: {} };
+    }
+    try {
+        return JSON.parse(fs.readFileSync(statePath, "utf-8"));
+    } catch {
+        return { solved: [], hashes: {} };
+    }
 }
 
-function markSolved(name: string) {
-    const statePath = path.resolve(STATE_FILE);
-    fs.appendFileSync(statePath, `${name}\n`);
+function saveState(state: State) {
+    const statePath = path.resolve(PROJECT_ROOT, STATE_FILE);
+    fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
 }
 
 function runExercise(exercise: Exercise): boolean {
     console.log(chalk.blue(`\nCompiling/Testing ${exercise.path}...`));
-    const env = { ...process.env, FOUNDRY_TEST: exercise.path, FOUNDRY_SRC: exercise.path };
+    const fullPath = path.resolve(PROJECT_ROOT, exercise.path);
+    const env = { ...process.env, FOUNDRY_TEST: fullPath, FOUNDRY_SRC: fullPath };
     try {
         if (exercise.mode === "compile") {
-            execSync(`forge build ${exercise.path}`, { stdio: "pipe", env });
+            execSync(`forge build ${fullPath}`, { stdio: "pipe", env });
         } else {
-            execSync(`forge test --match-path ${exercise.path}`, { stdio: "pipe", env });
+            execSync(`forge test --match-path ${fullPath}`, { stdio: "pipe", env });
         }
         console.log(chalk.green(`✓ Successfully ran ${exercise.path}!\n`));
         return true;
@@ -72,17 +101,18 @@ program
     .description("Show the progress on the exercises")
     .action(() => {
         const exercises = getExercises();
-        const solved = getSolved();
-        
+        const state = getState();
+
         programHeader();
         console.log(chalk.bold.underline("Progress:\n"));
         exercises.forEach(ex => {
-            const status = solved.has(ex.name) ? chalk.green("Done") : chalk.yellow("Pending");
+            const isSolved = state.solved.includes(ex.name);
+            const status = isSolved ? chalk.green("Done") : chalk.yellow("Pending");
             console.log(`${chalk.cyan(ex.name.padEnd(25))} ${ex.path.padEnd(45)} ${status}`);
         });
-        
-        const solvedCount = exercises.filter(e => solved.has(e.name)).length;
-        console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount/exercises.length*100)}%)\n`);
+
+        const solvedCount = exercises.filter(e => state.solved.includes(e.name)).length;
+        console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount / exercises.length * 100)}%)\n`);
     });
 
 program
@@ -91,11 +121,11 @@ program
     .argument("[name]", "Name of the exercise to run")
     .action((name) => {
         const exercises = getExercises();
-        const solved = getSolved();
-        
-        const target = name 
-            ? exercises.find(e => e.name === name) 
-            : exercises.find(e => !solved.has(e.name));
+        const state = getState();
+
+        const target = name
+            ? exercises.find(e => e.name === name)
+            : exercises.find(e => !state.solved.includes(e.name));
 
         if (!target) {
             console.log(chalk.green("🎉 All exercises completed!"));
@@ -103,8 +133,10 @@ program
         }
 
         const success = runExercise(target);
-        if (success && !solved.has(target.name)) {
-            markSolved(target.name);
+        if (success && !state.solved.includes(target.name)) {
+            state.solved.push(target.name);
+            state.hashes[target.name] = getFileHash(target.path);
+            saveState(state);
         }
     });
 
@@ -112,13 +144,11 @@ program
     .command("reset")
     .description("Reset completed exercises")
     .action(() => {
-        const statePath = path.resolve(STATE_FILE);
-        if (fs.existsSync(statePath)) {
-            fs.unlinkSync(statePath);
-            console.log(chalk.green("✓ Progress reset successfully!"));
-        } else {
-            console.log(chalk.yellow("No progress to reset."));
-        }
+        const state = getState();
+        // Keep hashes but clear solved list so users have to edit the file to re-solve
+        state.solved = [];
+        saveState(state);
+        console.log(chalk.green("✓ Progress reset successfully! Files will be re-solved once you edit them."));
     });
 
 program
@@ -127,11 +157,11 @@ program
     .argument("[name]", "Name of the exercise to get hint for")
     .action((name) => {
         const exercises = getExercises();
-        const solved = getSolved();
-        
-        const target = name 
-            ? exercises.find(e => e.name === name) 
-            : exercises.find(e => !solved.has(e.name));
+        const state = getState();
+
+        const target = name
+            ? exercises.find(e => e.name === name)
+            : exercises.find(e => !state.solved.includes(e.name));
 
         if (!target) {
             console.log(chalk.green("🎉 All exercises completed! No hints needed."));
@@ -148,85 +178,111 @@ program
     .description("Watch exercises and automatically run when files change")
     .action(() => {
         let isRunning = false;
-        
-        const runNext = () => {
-            if (isRunning) return;
+        let pendingRun = false;
+        let currentExercise: Exercise | undefined;
+        let isSolvedState = false;
+
+        const runCurrent = async () => {
+            if (isRunning) {
+                pendingRun = true;
+                return;
+            }
+
             isRunning = true;
-            
+            pendingRun = false;
+
             const exercises = getExercises();
-            const solved = getSolved();
-            const next = exercises.find(e => !solved.has(e.name));
-            
-            if (!next) {
+            const state = getState();
+
+            // If no current exercise or current is solved, look for the first unsolved
+            if (!currentExercise || state.solved.includes(currentExercise.name)) {
+                currentExercise = exercises.find(e => !state.solved.includes(e.name));
+            }
+
+            if (!currentExercise) {
                 console.clear();
                 programHeader();
                 console.log(chalk.green("\n🎉 All exercises completed! You are done with soliditylings!"));
                 process.exit(0);
             }
-            
+
             console.clear();
             programHeader();
-            const success = runExercise(next);
+            const success = runExercise(currentExercise);
+
             if (success) {
-                markSolved(next.name);
-                setTimeout(() => {
-                    isRunning = false;
-                    runNext();
-                }, 1500); // Give user a moment to see success text before moving on
+                const currentHash = getFileHash(currentExercise.path);
+                const lastHash = state.hashes[currentExercise.name];
+
+                // Rustlings logic: must have a different hash than the reset hash to move on
+                if (currentHash !== lastHash) {
+                    if (!state.solved.includes(currentExercise.name)) {
+                        state.solved.push(currentExercise.name);
+                        state.hashes[currentExercise.name] = currentHash;
+                        saveState(state);
+                    }
+                    console.log(chalk.green(`\n✓ Exercise ${currentExercise.name} solved!`));
+                    console.log(chalk.gray(`\nCommands: [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
+                    isSolvedState = true;
+                } else {
+                    console.log(chalk.yellow(`\n✓ This exercise is technically solved, but you already solved this version.`));
+                    console.log(chalk.yellow(`  Please make a change to the file to move forward.`));
+                    console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
+                    isSolvedState = false;
+                }
             } else {
                 console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
-                isRunning = false;
+                isSolvedState = false;
             }
+
+            isRunning = false;
+            if (pendingRun) runCurrent();
         };
 
-        runNext();
+        runCurrent();
 
-        chokidar.watch("exercises/**/*.sol", { ignored: /(^|[\/\\])\../ }).on("all", (event, path) => {
+        chokidar.watch(path.resolve(PROJECT_ROOT, "exercises/**/*.sol"), {
+            ignored: /(^|[\/\\])\../,
+            persistent: true,
+            ignoreInitial: true,
+            awaitWriteFinish: {
+                stabilityThreshold: 300,
+                pollInterval: 100
+            }
+        }).on("all", (event) => {
             if (event === 'addDir' || event === 'unlinkDir') return;
-            if (!isRunning) runNext();
+            runCurrent();
         });
-        
+
         readline.emitKeypressEvents(process.stdin);
         if (process.stdin.isTTY) {
             process.stdin.setRawMode(true);
         }
 
         process.stdin.on('keypress', (str, key) => {
-            if (key.ctrl && key.name === 'c') {
-                process.exit();
-            } else if (key.name === 'q') {
+            if (key.ctrl && key.name === 'c' || key.name === 'q') {
                 process.exit();
             } else if (key.name === 'h') {
-                if (isRunning) return;
-                const exercises = getExercises();
-                const solved = getSolved();
-                const next = exercises.find(e => !solved.has(e.name));
-                if (next) {
-                    console.log(chalk.bold.yellow(`\nHint for ${next.name}:`));
-                    console.log(next.hint || chalk.gray("No hint available for this exercise."));
-                    console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
-                }
+                if (isRunning || !currentExercise) return;
+                console.log(chalk.bold.yellow(`\nHint for ${currentExercise.name}:`));
+                console.log(currentExercise.hint || chalk.gray("No hint available for this exercise."));
             } else if (key.name === 'l') {
                 if (isRunning) return;
                 console.clear();
                 programHeader();
                 const exercises = getExercises();
-                const solved = getSolved();
-                console.log(chalk.bold.underline("Progress:\n"));
+                const state = getState();
                 exercises.forEach(ex => {
-                    const status = solved.has(ex.name) ? chalk.green("Done") : chalk.yellow("Pending");
-                    console.log(`${chalk.cyan(ex.name.padEnd(25))} ${ex.path.padEnd(45)} ${status}`);
+                    const status = state.solved.includes(ex.name) ? chalk.green("Done") : chalk.yellow("Pending");
+                    console.log(`${chalk.cyan(ex.name.padEnd(25))} ${status}`);
                 });
-                
-                const solvedCount = exercises.filter(e => solved.has(e.name)).length;
-                console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount/exercises.length*100)}%)\n`);
-                console.log(chalk.gray("Commands: [h]int, [l]ist, [r]erun, [q]uit"));
+            } else if (key.name === 'n') {
+                if (isRunning || !isSolvedState) return;
+                // Manual progression to the next unsolved exercise
+                currentExercise = undefined;
+                runCurrent();
             } else if (key.name === 'r' || key.name === 'return' || key.name === 'enter') {
-                if (!isRunning) {
-                     console.clear();
-                     programHeader();
-                     runNext();
-                }
+                if (!isRunning) runCurrent();
             }
         });
     });
@@ -236,8 +292,8 @@ program
     .description("Verify all exercises according to the sequence")
     .action(() => {
         const exercises = getExercises();
-        const solved = getSolved();
-        
+        const state = getState();
+
         programHeader();
         for (const exercise of exercises) {
             const success = runExercise(exercise);
@@ -245,10 +301,12 @@ program
                 console.log(chalk.red(`\nVerification failed for ${exercise.path}.`));
                 process.exit(1);
             }
-            if (!solved.has(exercise.name)) {
-                markSolved(exercise.name);
+            if (!state.solved.includes(exercise.name)) {
+                state.solved.push(exercise.name);
+                state.hashes[exercise.name] = getFileHash(exercise.path);
             }
         }
+        saveState(state);
         console.log(chalk.green(`\n🎉 All exercises verified and completed!`));
     });
 
@@ -259,7 +317,7 @@ program
         const remappings = [
             "forge-std/=lib/forge-std/src/"
         ];
-        fs.writeFileSync(path.resolve("remappings.txt"), remappings.join("\n"));
+        fs.writeFileSync(path.resolve(PROJECT_ROOT, "remappings.txt"), remappings.join("\n"));
         console.log(chalk.green("✓ Successfully generated remappings.txt"));
     });
 
@@ -270,14 +328,11 @@ program
         const docsJson = {
             "name": "soliditylings",
             "sidebar": [
-                {
-                    "title": "Introduction",
-                    "path": "/"
-                }
+                { "group": "Documentation", "pages": [{ "title": "Introduction", "href": "/" }] }
             ]
         };
-        fs.writeFileSync(path.resolve("docs.json"), JSON.stringify(docsJson, null, 2));
-        console.log(chalk.green("✓ Successfully initialized docs.json! Run this again if you need to reset the docs.json file."));
+        fs.writeFileSync(path.resolve(PROJECT_ROOT, "docs.json"), JSON.stringify(docsJson, null, 2));
+        console.log(chalk.green("✓ Successfully initialized docs.json!"));
     });
 
 program.parse(process.argv);
