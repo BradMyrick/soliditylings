@@ -69,7 +69,7 @@ function saveState(state: State) {
 function runExercise(exercise: Exercise): boolean {
     console.log(chalk.blue(`\nCompiling/Testing ${exercise.path}...`));
     const fullPath = path.resolve(PROJECT_ROOT, exercise.path);
-    const env = { ...process.env, FOUNDRY_TEST: fullPath, FOUNDRY_SRC: fullPath };
+    const env = { ...process.env };
     try {
         if (exercise.mode === "compile") {
             execSync(`forge build ${fullPath}`, { stdio: "pipe", env });
@@ -194,8 +194,8 @@ program
             const exercises = getExercises();
             const state = getState();
 
-            // If no current exercise or current is solved, look for the first unsolved
-            if (!currentExercise || state.solved.includes(currentExercise.name)) {
+            // Only find the first unsolved if we don't have a current focus.
+            if (!currentExercise) {
                 currentExercise = exercises.find(e => !state.solved.includes(e.name));
             }
 
@@ -214,17 +214,21 @@ program
                 const currentHash = getFileHash(currentExercise.path);
                 const lastHash = state.hashes[currentExercise.name];
 
-                // Rustlings logic: must have a different hash than the reset hash to move on
-                if (currentHash !== lastHash) {
-                    if (!state.solved.includes(currentExercise.name)) {
-                        state.solved.push(currentExercise.name);
-                        state.hashes[currentExercise.name] = currentHash;
-                        saveState(state);
-                    }
+                if (state.solved.includes(currentExercise.name)) {
+                    // Already solved. Show green solved view.
+                    console.log(chalk.green(`\n✓ Exercise ${currentExercise.name} is solved!`));
+                    console.log(chalk.gray(`\nCommands: [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
+                    isSolvedState = true;
+                } else if (currentHash !== lastHash) {
+                    // New solve!
+                    state.solved.push(currentExercise.name);
+                    state.hashes[currentExercise.name] = currentHash;
+                    saveState(state);
                     console.log(chalk.green(`\n✓ Exercise ${currentExercise.name} solved!`));
                     console.log(chalk.gray(`\nCommands: [n]ext, [h]int, [l]ist, [r]erun, [q]uit`));
                     isSolvedState = true;
                 } else {
+                    // Pending, passes, but no change from before reset.
                     console.log(chalk.yellow(`\n✓ This exercise is technically solved, but you already solved this version.`));
                     console.log(chalk.yellow(`  Please make a change to the file to move forward.`));
                     console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
@@ -249,8 +253,15 @@ program
                 stabilityThreshold: 300,
                 pollInterval: 100
             }
-        }).on("all", (event) => {
+        }).on("all", (event, filePath) => {
             if (event === 'addDir' || event === 'unlinkDir') return;
+            const exercises = getExercises();
+            const absoluteFilePath = path.resolve(filePath);
+            const matchingExercise = exercises.find(e => path.resolve(PROJECT_ROOT, e.path) === absoluteFilePath);
+            
+            if (matchingExercise) {
+                currentExercise = matchingExercise;
+            }
             runCurrent();
         });
 
