@@ -73,16 +73,16 @@ program
     .action(() => {
         const exercises = getExercises();
         const solved = getSolved();
-        
+
         programHeader();
         console.log(chalk.bold.underline("Progress:\n"));
         exercises.forEach(ex => {
             const status = solved.has(ex.name) ? chalk.green("Done") : chalk.yellow("Pending");
             console.log(`${chalk.cyan(ex.name.padEnd(25))} ${ex.path.padEnd(45)} ${status}`);
         });
-        
+
         const solvedCount = exercises.filter(e => solved.has(e.name)).length;
-        console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount/exercises.length*100)}%)\n`);
+        console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount / exercises.length * 100)}%)\n`);
     });
 
 program
@@ -92,9 +92,9 @@ program
     .action((name) => {
         const exercises = getExercises();
         const solved = getSolved();
-        
-        const target = name 
-            ? exercises.find(e => e.name === name) 
+
+        const target = name
+            ? exercises.find(e => e.name === name)
             : exercises.find(e => !solved.has(e.name));
 
         if (!target) {
@@ -128,9 +128,9 @@ program
     .action((name) => {
         const exercises = getExercises();
         const solved = getSolved();
-        
-        const target = name 
-            ? exercises.find(e => e.name === name) 
+
+        const target = name
+            ? exercises.find(e => e.name === name)
             : exercises.find(e => !solved.has(e.name));
 
         if (!target) {
@@ -148,44 +148,62 @@ program
     .description("Watch exercises and automatically run when files change")
     .action(() => {
         let isRunning = false;
-        
-        const runNext = () => {
-            if (isRunning) return;
+        let pendingRun = false;
+
+        const runNext = async () => {
+            if (isRunning) {
+                pendingRun = true;
+                return;
+            }
+
             isRunning = true;
-            
+            pendingRun = false;
+
             const exercises = getExercises();
             const solved = getSolved();
             const next = exercises.find(e => !solved.has(e.name));
-            
+
             if (!next) {
                 console.clear();
                 programHeader();
                 console.log(chalk.green("\n🎉 All exercises completed! You are done with soliditylings!"));
                 process.exit(0);
             }
-            
+
             console.clear();
             programHeader();
             const success = runExercise(next);
+
             if (success) {
                 markSolved(next.name);
-                setTimeout(() => {
-                    isRunning = false;
-                    runNext();
-                }, 1500); // Give user a moment to see success text before moving on
+                // Wait a bit so the user can see the success message
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                isRunning = false;
+                runNext();
             } else {
                 console.log(chalk.gray(`\nCommands: [h]int, [l]ist, [r]erun, [q]uit`));
                 isRunning = false;
+                if (pendingRun) {
+                    runNext();
+                }
             }
         };
 
         runNext();
 
-        chokidar.watch("exercises/**/*.sol", { ignored: /(^|[\/\\])\../ }).on("all", (event, path) => {
+        chokidar.watch("exercises/**/*.sol", {
+            ignored: /(^|[\/\\])\../,
+            persistent: true,
+            ignoreInitial: true,
+            awaitWriteFinish: {
+                stabilityThreshold: 300,
+                pollInterval: 100
+            }
+        }).on("all", (event) => {
             if (event === 'addDir' || event === 'unlinkDir') return;
-            if (!isRunning) runNext();
+            runNext();
         });
-        
+
         readline.emitKeypressEvents(process.stdin);
         if (process.stdin.isTTY) {
             process.stdin.setRawMode(true);
@@ -217,15 +235,13 @@ program
                     const status = solved.has(ex.name) ? chalk.green("Done") : chalk.yellow("Pending");
                     console.log(`${chalk.cyan(ex.name.padEnd(25))} ${ex.path.padEnd(45)} ${status}`);
                 });
-                
+
                 const solvedCount = exercises.filter(e => solved.has(e.name)).length;
-                console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount/exercises.length*100)}%)\n`);
+                console.log(`\nProgress: ${solvedCount}/${exercises.length} (${Math.round(solvedCount / exercises.length * 100)}%)\n`);
                 console.log(chalk.gray("Commands: [h]int, [l]ist, [r]erun, [q]uit"));
             } else if (key.name === 'r' || key.name === 'return' || key.name === 'enter') {
                 if (!isRunning) {
-                     console.clear();
-                     programHeader();
-                     runNext();
+                    runNext();
                 }
             }
         });
@@ -237,7 +253,7 @@ program
     .action(() => {
         const exercises = getExercises();
         const solved = getSolved();
-        
+
         programHeader();
         for (const exercise of exercises) {
             const success = runExercise(exercise);
