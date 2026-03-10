@@ -2,17 +2,30 @@
 
 Getting started with `soliditylings` is easy. Follow the steps below to start completing the exercises on your own machine.
 
+## Prerequisites
+
+Before installing `soliditylings`, ensure you have the following installed:
+
+1. **Node.js & npm**: [Download Node.js](https://nodejs.org/)
+2. **Foundry**: Soliditylings uses Foundry for compiling and testing.
+   ```shell
+   curl -L https://foundry.paradigm.xyz | bash
+   foundryup
+   ```
+
 ## Installation
 
-To get started, clone the repository and install `soliditylings` globally via `npm`:
+To get started, clone the repository, install dependencies, build the project, and then install it globally:
 
 ```shell
 git clone https://github.com/BradMyrick/soliditylings.git
 cd soliditylings
+npm install
+npm run build
 npm install -g .
 ```
 
-*Note: You must have Node.js and npm installed to proceed.
+*Note: Building the project ensures the CLI binary is generated correctly before global installation.
 
 ## First Steps
 
