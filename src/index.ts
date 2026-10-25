@@ -12,6 +12,13 @@ import * as readline from "readline";
 const program = new Command();
 const STATE_FILE = ".soliditylings-state";
 const INFO_FILE = "info.toml";
+const RUN_TIMEOUT_MS = 120_000;
+
+// Every exercise runs in an isolated throwaway Foundry project: a broken
+// exercise must never block another (forge compiles the whole source tree
+// when run in-repo, so one missing brace would sink every --match-path).
+// The staging dir persists between runs so forge's cache warms up.
+const STAGE_DIR = path.join(require("os").tmpdir(), "soliditylings-stage");
 
 interface Exercise {
     name: string;
@@ -49,6 +56,49 @@ function getExercises(): Exercise[] {
     return parsed.exercises as Exercise[];
 }
 
+/**
+ * Copy one exercise into the staging Foundry project and return the path
+ * to the staged file. `lib` is symlinked so forge-std resolves.
+ */
+function stageExercise(exercise: Exercise): string {
+    const srcDir = path.join(STAGE_DIR, "src");
+    fs.rmSync(srcDir, { recursive: true, force: true });
+    fs.mkdirSync(srcDir, { recursive: true });
+
+    fs.writeFileSync(
+        path.join(STAGE_DIR, "foundry.toml"),
+        [
+            "[profile.default]",
+            'src = "src"',
+            'out = "out"',
+            'libs = ["lib"]',
+            'test = "src"',
+            `solc = "${getPinnedSolc()}"`,
+            "",
+        ].join("\n")
+    );
+
+    const libLink = path.join(STAGE_DIR, "lib");
+    fs.rmSync(libLink, { recursive: true, force: true });
+    fs.symlinkSync(path.resolve(PROJECT_ROOT, "lib"), libLink, "dir");
+
+    const staged = path.join(srcDir, path.basename(exercise.path));
+    fs.copyFileSync(path.resolve(PROJECT_ROOT, exercise.path), staged);
+    return staged;
+}
+
+/** The solc version the curriculum pins (read from foundry.toml). */
+function getPinnedSolc(): string {
+    try {
+        const raw = fs.readFileSync(path.resolve(PROJECT_ROOT, "foundry.toml"), "utf-8");
+        const m = raw.match(/^solc\s*=\s*"([^"]+)"/m);
+        if (m) return m[1];
+    } catch {
+        /* fall through */
+    }
+    return "0.8.38"; // keep in sync with foundry.toml
+}
+
 function getState(): State {
     const statePath = path.resolve(PROJECT_ROOT, STATE_FILE);
     if (!fs.existsSync(statePath)) {
@@ -67,15 +117,17 @@ function saveState(state: State) {
 }
 
 function runExercise(exercise: Exercise): boolean {
-    console.log(chalk.blue(`\nCompiling/Testing ${exercise.path}...`));
-    const fullPath = path.resolve(PROJECT_ROOT, exercise.path);
+    console.log(chalk.blue(`\nTesting ${exercise.path}...`));
+    const staged = stageExercise(exercise);
     const env = { ...process.env };
     try {
-        if (exercise.mode === "compile") {
-            execSync(`forge build ${fullPath}`, { stdio: "pipe", env });
-        } else {
-            execSync(`forge test --match-path ${fullPath}`, { stdio: "pipe", env });
-        }
+        // A hung test must never hang the watcher — the timeout kills it.
+        execSync(`forge test --match-path ${staged}`, {
+            stdio: "pipe",
+            env,
+            timeout: RUN_TIMEOUT_MS,
+            cwd: STAGE_DIR,
+        });
         console.log(chalk.green(`✓ Successfully ran ${exercise.path}!\n`));
         return true;
     } catch (error: any) {
@@ -83,6 +135,9 @@ function runExercise(exercise: Exercise): boolean {
         console.log(chalk.red(`✗ Testing of ${exercise.path} failed! Please try again. Here is the output:\n`));
         if (error.stdout) console.log(error.stdout.toString());
         if (error.stderr) console.log(error.stderr.toString());
+        if (error.signal === "SIGTERM") {
+            console.log(chalk.yellow(`\n⚠ Exercise timed out after ${RUN_TIMEOUT_MS / 1000}s — check for an infinite loop or blocking call.`));
+        }
         return false;
     }
 }
@@ -340,8 +395,10 @@ program
                 state.solved.push(exercise.name);
                 state.hashes[exercise.name] = getFileHash(exercise.path);
             }
+            // Persist after each success so a mid-run failure (or Ctrl-C)
+            // never throws away progress already earned.
+            saveState(state);
         }
-        saveState(state);
         console.log(chalk.green(`\n🎉 All exercises verified and completed!`));
     });
 

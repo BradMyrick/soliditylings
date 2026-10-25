@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.38;
+
+// payable1
+// `payable` is a type modifier for both functions and addresses. A
+// function marked payable may receive ETH with the call; without the
+// keyword, any attached value reverts before your code even runs.
+//
+// Note how `payable` composes with the other keywords you've met:
+// visibility (public) comes first, then mutability.
+//
+// TODO: Make `deposit` able to receive ETH.
 
 import "forge-std/Test.sol";
 
-// payable1.sol
-// Make me pass!
-
 contract Payable1 {
-    // TODO: We want to accept ETH when someone calls this function!
-    // But it's missing something.
+    // TODO: accept ETH here
     function deposit() public {
-        // Accept ETH
+        // No body needed — receiving the ETH is the point.
     }
 }
 
@@ -22,8 +28,7 @@ contract Payable1Test is Test {
     }
 
     function testDeposit() public {
-        // This will fail if the function is not payable
-        (bool success, ) = address(target).call{value: 1 ether}(abi.encodeWithSignature("deposit()"));
+        (bool success,) = address(target).call{value: 1 ether}(abi.encodeWithSignature("deposit()"));
         assertTrue(success, "Sending ETH should succeed");
         assertEq(address(target).balance, 1 ether);
     }

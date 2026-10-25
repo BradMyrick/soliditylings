@@ -1,182 +1,223 @@
+# Exercises run in the ORDER they appear below: a single flat, linear
+# progression from easiest to hardest. Difficulty is expressed only by
+# position — there are no section labels by design.
+#
+# Modes (every exercise is test mode — the learner must make the Foundry
+# test contract in the file pass; compiling alone is never enough):
+#   test = the learner must make the tests pass.
+#
+# Every exercise has a solved twin in solutions/ which CI verifies, so the
+# curriculum is always solvable. See CONTRIBUTING.md.
+
+# ===== 00 intro =====
 [[exercises]]
 name = "intro1"
 path = "exercises/00_intro/intro1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Just run the exercise to see the welcome message!
-Fix the syntax error to progress."""
+Every `{` in Solidity needs its matching `}`. Count the braces in the
+file — the contract is never closed. Watch the line number in the
+compiler error; it usually points AFTER the actual problem."""
 
 [[exercises]]
 name = "intro2"
 path = "exercises/00_intro/intro2.sol"
 mode = "test"
 hint = """
-Another easy one! Look closely at the function."""
+The test tells you exactly what it wants: `returnTrue()` must return
+true. Only one literal in that function can change."""
 
+# ===== 01 variables =====
 [[exercises]]
 name = "variables1"
 path = "exercises/01_variables/variables1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-You just need to declare the variable without initializing it.
-Remember to include the type `uint256` and the visibility `public`."""
+State variable declarations look like `TYPE visibility NAME;` — for
+example an unsigned integer that anyone can read. The test reads it
+through its automatic getter and expects the uint256 zero value."""
 
 [[exercises]]
 name = "variables2"
 path = "exercises/01_variables/variables2.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Declare an `address` variable named `owner` and make it `public`."""
+`address` is a built-in 20-byte type — no import needed. Declare it
+public so the test's automatic getter `owner()` exists."""
 
 [[exercises]]
 name = "variables3"
 path = "exercises/01_variables/variables3.sol"
 mode = "test"
 hint = """
-Use `uint256 public constant MAX_SUPPLY = 10000;`."""
+Which keyword tells the compiler a value is fixed at compile time and
+never changes? That keyword plus a literal assignment is all you need."""
 
+# ===== 02 functions =====
 [[exercises]]
 name = "functions1"
 path = "exercises/02_functions/functions1.sol"
 mode = "test"
 hint = """
-A function definition looks like:
-function myFunc() public pure returns (string memory) { ... }"""
+The order is: `function name() public pure returns (string memory)`.
+The body just returns a string literal — don't forget `memory`; string
+is a reference type."""
 
 [[exercises]]
 name = "functions2"
 path = "exercises/02_functions/functions2.sol"
-mode = "compile"
+mode = "test"
 hint = """
-You need to add `public` or `external` to the function definition."""
+The test calls `increment()` through a low-level call from OUTSIDE the
+contract. Which of the four visibilities allows that?"""
 
 [[exercises]]
 name = "functions3"
 path = "exercises/02_functions/functions3.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Since the function reads state (`value`), it should be `view` instead of `pure`."""
+`pure` promises the compiler you won't even READ state. `getValue`
+reads `value`. One step up the mutability ladder keeps the promise
+honest while allowing reads."""
 
+# ===== 03 collections =====
 [[exercises]]
 name = "arrays1"
 path = "exercises/03_collections/arrays1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Declare it as: `uint256[] public numbers;`
-And push with: `numbers.push(number);`"""
+A dynamic array of unsigned integers is `uint256[]`. Declaring it
+`public` creates a getter that takes an index. Storage arrays grow
+with a one-word method call that appends."""
 
 [[exercises]]
 name = "mappings1"
 path = "exercises/03_collections/mappings1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Declare it as: `mapping(address => uint256) public balances;`
-And assign with: `balances[user] = amount;`"""
+The declaration reads like a signature: `mapping(address => uint256)`,
+then visibility, then the name. Writing to it is like assigning to an
+array at an index: `balances[user] = amount;`."""
 
 [[exercises]]
 name = "mappings2"
 path = "exercises/03_collections/mappings2.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Declare it as: `mapping(address => mapping(address => uint256)) public allowance;`
-And return with: `return allowance[owner][spender];`"""
+The value type of a mapping can be another mapping — just replace
+`uint256` in the arrow's right side with `mapping(address => uint256)`.
+Reads chain the same way they write: `a[b][c]`."""
 
+# ===== 04 advanced types =====
 [[exercises]]
 name = "structs1"
 path = "exercises/04_advanced_types/structs1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Define the struct:
-struct User { string username; uint256 score; }
-And assign it:
-currentUser = User(_username, _score);"""
+A struct definition lists `TYPE NAME;` fields inside braces, at
+contract level. Construct one positionally like a function call:
+`User(_username, _score)`."""
 
 [[exercises]]
 name = "enums1"
 path = "exercises/04_advanced_types/enums1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Define the enum:
-enum State { Pending, Active, Inactive }
-And set it:
-currentState = State.Active;"""
+`enum State { Pending, Active, Inactive }` numbers its members 0, 1, 2.
+Assign with `State.Active` — the member's name prefixed by the type."""
 
 [[exercises]]
 name = "errors1"
 path = "exercises/04_advanced_types/errors1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Define it as:
-error Unauthorized(address caller);
-And revert natively:
-if (msg.sender != owner) revert Unauthorized(msg.sender);"""
+Custom errors are declared at contract level like events, but with the
+`error` keyword. To use one, `if` the bad condition and `revert` with
+the error name and its argument."""
 
+# ===== 05 contracts =====
 [[exercises]]
 name = "modifiers1"
 path = "exercises/05_contracts/modifiers1.sol"
 mode = "test"
 hint = """
-modifier onlyOwner() {
-    require(msg.sender == owner, "Not owner");
-    _;
-}
-And add `onlyOwner` to the `changeState` signature."""
+A modifier is declared with `modifier` instead of `function`, contains
+its check, then `_;` where the wrapped body runs. Attach it by name in
+the function header after the visibility."""
 
 [[exercises]]
 name = "inheritance1"
 path = "exercises/05_contracts/inheritance1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Use `contract Dog is Animal`
-And `function speak() public pure override returns (string memory)`"""
+Inheritance is declared with `is`. The parent already says `virtual`,
+so the child needs the matching keyword for overrides — and the same
+function signature."""
 
 [[exercises]]
 name = "interfaces1"
 path = "exercises/05_contracts/interfaces1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-interface IGreeter { function greet() external pure returns (string memory); }
-And call it with: `return IGreeter(target).greet();`"""
+An interface has no function bodies and its functions are implicitly
+`external`. To call through one, wrap an address in the interface type
+like a cast: `IGreeter(target).greet()`."""
 
+# ===== 06 memory =====
 [[exercises]]
 name = "memory1"
 path = "exercises/06_memory/memory1.sol"
-mode = "compile"
+mode = "test"
 hint = """
-Strings and arrays in function arguments must specify their data location. Use `memory`."""
+Reference-type parameters must name a home: `storage`, `memory`, or
+`calldata`. This function only needs the string to exist during the
+call — the conventional choice for a copy that dies with the call."""
 
 [[exercises]]
 name = "calldata1"
 path = "exercises/06_memory/calldata1.sol"
 mode = "test"
 hint = """
-For external functions, use `calldata` instead of `memory` for array/string arguments to save gas."""
+Solidity refuses to convert `memory` to `calldata` — call data cannot
+be synthesized. So `processInput`'s parameter must already BE calldata.
+Careful: only `external` functions may take calldata parameters."""
 
+# ===== 07 payable =====
 [[exercises]]
 name = "payable1"
 path = "exercises/07_payable/payable1.sol"
 mode = "test"
 hint = """
-Add the `payable` keyword to the function signature and the address variable."""
+One keyword turns a function into an ETH receiver — and the same
+keyword would turn an `address` into an `address payable`. Without it,
+any attached value reverts the whole call."""
 
 [[exercises]]
 name = "receive1"
 path = "exercises/07_payable/receive1.sol"
 mode = "test"
 hint = """
-Add `receive() external payable {}` to allow the contract to accept direct ETH transfers."""
+There's a special no-arg, always-payable function that catches empty-
+calldata transfers. Its name is a keyword: `receive() external
+payable`. Put your counter increment inside it."""
 
+# ===== 08 events =====
 [[exercises]]
 name = "events1"
 path = "exercises/08_events/events1.sol"
 mode = "test"
 hint = """
-Declare the event: `event Ping(address indexed sender);`
-And emit it: `emit Ping(msg.sender);`"""
+Events are declared like structs but with the `event` keyword; `indexed`
+goes before the parameter type. Firing one is a single keyword followed
+by the event name and arguments."""
 
+# ===== 09 security =====
 [[exercises]]
 name = "reentrancy1"
 path = "exercises/09_security/reentrancy1.sol"
 mode = "test"
 hint = """
-Update the user's balance *before* making the external call to avoid reentrancy."""
+checks → effects → interactions. The external `call` must be the LAST
+thing that happens. Ask yourself: if the attacker's receive() ran
+again right after the call, what state would it see? Make sure it
+already sees a zeroed balance."""

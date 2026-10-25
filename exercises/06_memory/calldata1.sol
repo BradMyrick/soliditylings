@@ -1,15 +1,32 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.38;
+
+// calldata1
+// `calldata` is the cheapest location: it is a read-only view straight
+// into the transaction's input data. No bytes get copied. For an
+// EXTERNAL function that doesn't mutate its array/string arguments,
+// calldata is the professional default — it's a gas optimization
+// auditors look for.
+//
+// Below, the internal `_hash` helper insists on `bytes calldata` — and
+// Solidity will not implicitly convert `memory` to `calldata` (there is
+// no way to fake call data that isn't there). So the public function's
+// parameter has exactly one legal location.
+//
+// TODO: Change `processInput` so its parameter can be passed to
+// `_hash` — declare it as `calldata` and make it `external`.
 
 import "forge-std/Test.sol";
 
-// calldata1.sol
-// We want to optimize the gas usage of our external function.
-
 contract Calldata1 {
-    // TODO: Change the string data location from `memory` to `calldata` to save gas.
-    function processInput(string memory input) external pure returns (bytes32) {
-        return keccak256(abi.encodePacked(input));
+    // Fixed helper: only accepts calldata.
+    function _hash(bytes calldata input) internal pure returns (bytes32) {
+        return keccak256(input);
+    }
+
+    // TODO: make this parameter calldata-compatible with _hash
+    function processInput(bytes memory input) public pure returns (bytes32) {
+        return _hash(input);
     }
 }
 
@@ -20,18 +37,8 @@ contract Calldata1Test is Test {
         target = new Calldata1();
     }
 
-    function testCalldata() public {
-        // We just ensure the function still works
-        assertEq(target.processInput("hello"), keccak256(abi.encodePacked("hello")));
-        
-        // However, this exercise will fail if the signature does not rigidly match `(string calldata)`.
-        // We will assert the signature via a low-level call check.
-        (bool success, ) = address(target).call(abi.encodeWithSignature("processInput(string)"));
-        assertTrue(success, "Function should still be callable");
-        
-        // As a simple hack to require `calldata` in the test, we'll check the source code itself here using forge-std's vm.readFile?
-        // Actually, Solidity doesn't expose the parameter location in the ABI! So a test can't natively distinguish memory vs calldata here.
-        // For the sake of the exercise, we will just let it compile. Wait, if it has to fail, we can't easily fail a test just because it's using memory.
-        // Let's make it a compile error by having the user fix a type mismatch!
+    function testProcessInput() public {
+        bytes memory data = bytes("hello");
+        assertEq(target.processInput(data), keccak256(data));
     }
 }

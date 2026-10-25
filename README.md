@@ -1,48 +1,49 @@
 # Soliditylings
 
-Greetings and welcome to `soliditylings`. This project contains small exercises to get you used to writing and reading Solidity code! It is the spiritual clone of Rustlings, tailored entirely for Ethereum smart contract developers.
+Greetings and welcome to `soliditylings`. This project contains small exercises to get you used to writing and reading Solidity code! It is the spiritual clone of Rustlings (and golings), tailored entirely for Ethereum smart contract developers — built on [Foundry](https://book.getfoundry.sh/).
+
+Every exercise is a broken contract with a Foundry test contract beside it. Fix the contract until the test passes.
+
+## Prerequisites
+
+- [Foundry](https://book.getfoundry.sh/getting-started/installation) (`forge`)
+- Node.js ≥ 22
+
+The Solidity compiler is pinned (`solc = "0.8.38"` in `foundry.toml`) and every exercise declares `pragma solidity ^0.8.38;` — forge downloads the pinned version automatically.
 
 ## Usage
 
-### Getting Started
-
-Install `soliditylings` globally so you can use it anywhere:
-
 ```shell
-npm install -g .
-```
-
-To run the `soliditylings` application, just use the command:
-
-```shell
-soliditylings watch
+npm install
+npm install -g .        # optional: run `soliditylings` from anywhere
+soliditylings watch     # the recommended way to practice
 ```
 
 ### Commands
 
-There are several options you can use:
+- `watch`: Watches for file changes and automatically tests the current exercise. Side-by-side panes, hint overlay, and a progress bar. This is the recommended way to use `soliditylings`.
+- `run [name]`: Runs the next pending exercise, or a specific exercise by name.
+- `list`: Lists exercises and their completion status.
+- `hint`: Shows a hint for the current exercise (hints teach the concept — they never hand you the answer).
+- `verify`: Runs every exercise in order; stops at the first failure.
+- `reset`: Resets progress and restores the exercise files via git.
+- `lsp`: Generates `remappings.txt` for editor LSP support.
 
-- `watch`: Watches for file changes and automatically compiles/tests the current exercise. This is the recommended way to use `soliditylings`.
-- `verify`: Verifies all exercises by running them in sequence. It will stop at the first failure.
-- `run [name]`: Runs the next pending exercise, or a specific exercise if a name is provided.
-- `list`: Lists all exercises and their current completion status.
-- `hint`: Provides a hint for the current exercise.
-- `reset`: Resets all of your completion progress so you can start from scratch.
-- `lsp`: Generates a `remappings.txt` file which enables LSP (Language Server Protocol) support for Solidity in your code editor.
-- `init-docs`: Initializes a `docs.json` file to easily enable `docs.page` documentation compatibility.
+In `watch` mode: `n` next · `p` previous · `h` hint · `l` list · `r` rerun · `q` quit.
 
-### Doing Exercises
+### Doing exercises
 
-1. The exercises sort themselves by difficulty and topic.
-2. Every exercise is broken until you fix it! Look at the compiler and test output for clues.
-3. Fix the exercises! When it passes its tests/compiles without errors, `soliditylings` will track it as done.
+1. The exercises order themselves from easiest to hardest — work top to bottom.
+2. Every exercise is broken until you fix it. The test output tells you what's wrong.
+3. Each exercise lives in its own isolated Foundry project at run time, so breaking one never blocks another.
 
-## Documentation (docs.page)
+## The curriculum is guaranteed solvable
 
-This repository is compatible with `docs.page`. You can initialize the documentation sidebar by running:
+Every exercise has a solved twin in [`solutions/`](./solutions). CI verifies all of them:
 
-```shell
-soliditylings init-docs
+```sh
+make check-solved       # structure: exercises/ <-> info.toml <-> solutions/
+make verify-solutions   # every solution compiles and passes
 ```
 
-This will create a `docs.json` file which `docs.page` uses to understand the layout of your site.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) to add your own exercises.
