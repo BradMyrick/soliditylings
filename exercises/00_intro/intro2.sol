@@ -1,11 +1,20 @@
-// You can also write unit tests in Solidity!
-// soliditylings uses Foundry behind the scenes, so you can write normal tests
-// using forge-std.
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.38;
+
+// intro2
+// Tests are contracts too!
+//
+// soliditylings runs Foundry (forge) behind the scenes, so every exercise
+// carries its own test contract — you fix the code until the test passes.
+//
+// This one fails an assertion: `returnTrue()` says `false`, but the test
+// expects `true`. Flip it.
+
 import "forge-std/Test.sol";
 
 contract Intro2 {
     function returnTrue() public pure returns (bool) {
-        return false; // change to what testReturnTrue() expects
+        return false; // TODO: make the test pass
     }
 }
 
