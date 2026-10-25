@@ -19,6 +19,11 @@ npm install -g .        # optional: run `soliditylings` from anywhere
 soliditylings watch     # the recommended way to practice
 ```
 
+> **Note on the global install:** `npm install -g .` links the global
+> `soliditylings` binary to this repo's `dist/`. After pulling new
+> changes, run `npm run build` once (or skip the build entirely with
+> `npm run start -- watch`, which always runs the live source).
+
 ### Commands
 
 - `watch`: Compact dashboard for your second pane — status, forge output, hints, and progress; every save in your editor re-runs the current exercise. This is the recommended way to use `soliditylings`.
