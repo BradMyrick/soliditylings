@@ -21,15 +21,30 @@ soliditylings watch     # the recommended way to practice
 
 ### Commands
 
-- `watch`: Watches for file changes and automatically tests the current exercise. Side-by-side panes, hint overlay, and a progress bar. This is the recommended way to use `soliditylings`.
+- `watch`: Compact dashboard for your second pane — status, forge output, hints, and progress; every save in your editor re-runs the current exercise. This is the recommended way to use `soliditylings`.
 - `run [name]`: Runs the next pending exercise, or a specific exercise by name.
 - `list`: Lists exercises and their completion status.
 - `hint`: Shows a hint for the current exercise (hints teach the concept — they never hand you the answer).
+- `edit [name]`: Opens the next pending (or named) exercise in `$EDITOR`.
+- `path [name]`: Prints an exercise's path — `nvim $(soliditylings path)`.
 - `verify`: Runs every exercise in order; stops at the first failure.
 - `reset`: Resets progress and restores the exercise files via git.
 - `lsp`: Generates `remappings.txt` for editor LSP support.
 
-In `watch` mode: `n` next · `p` previous · `h` hint · `l` list · `r` rerun · `q` quit.
+### Working with your editor
+
+`watch` is a read-only dashboard — **you edit the files in your editor**, and every save re-runs the current exercise automatically. Two ways to set it up:
+
+**Two panes (recommended):** run `soliditylings watch` in one tmux/window pane and your editor in the other:
+
+```shell
+# pane 1                     # pane 2
+soliditylings watch          nvim $(soliditylings path)
+```
+
+**Or press `e` inside watch** to open the current exercise in `$EDITOR` (`EDITOR=nvim` if it's not already set) — the terminal hands itself to the editor and takes over again when the editor exits.
+
+In `watch` mode: `e` edit · `n` next · `p` previous · `h` hint · `l` list · `r` rerun · `j`/`k` scroll output · `q` quit. Solving an exercise auto-advances to the next pending one.
 
 ### Doing exercises
 

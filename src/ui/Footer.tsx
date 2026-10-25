@@ -25,7 +25,7 @@ export function Footer({ solved, total, status, width }: Props) {
                 <Text color={pct === 1 ? "green" : "magenta"}>{bar}</Text>
                 <Text> {solved}/{total} ({Math.round(pct * 100)}%)</Text>
             </Box>
-            <Text dimColor> n next · p prev · h hint · l list · r rerun · j/k scroll · q quit </Text>
+            <Text dimColor> e edit · n next · p prev · h hint · l list · r rerun · j/k scroll · q quit </Text>
         </Box>
     );
 }
