@@ -211,13 +211,372 @@ Events are declared like structs but with the `event` keyword; `indexed`
 goes before the parameter type. Firing one is a single keyword followed
 by the event name and arguments."""
 
-# ===== 09 security =====
+# ===== 09 arithmetic =====
+[[exercises]]
+name = "arithmetic1"
+path = "exercises/09_arithmetic/arithmetic1.sol"
+mode = "test"
+hint = """
+Since 0.8, + - * revert on overflow. `unchecked` opts BACK into the
+old wrap-around behavior. Which block does the addition sit inside,
+and what happens if you remove that block?"""
+
+[[exercises]]
+name = "arithmetic2"
+path = "exercises/09_arithmetic/arithmetic2.sol"
+mode = "test"
+hint = """
+The loop adds numbers up to 255 into an accumulator one byte wide —
+the total 32640 cannot fit. The return type is already uint256;
+make the accumulator match it."""
+
+[[exercises]]
+name = "arithmetic3"
+path = "exercises/09_arithmetic/arithmetic3.sol"
+mode = "test"
+hint = """
+Both answers are the target type wrapped around the value: T(value).
+Narrowing truncates; widening (uint128 → uint256) is always safe."""
+
+# ===== 10 security =====
 [[exercises]]
 name = "reentrancy1"
-path = "exercises/09_security/reentrancy1.sol"
+path = "exercises/10_security/reentrancy1.sol"
 mode = "test"
 hint = """
 checks → effects → interactions. The external `call` must be the LAST
 thing that happens. Ask yourself: if the attacker's receive() ran
 again right after the call, what state would it see? Make sure it
 already sees a zeroed balance."""
+
+[[exercises]]
+name = "security_txorigin"
+path = "exercises/10_security/security_txorigin.sol"
+mode = "test"
+hint = """
+tx.origin is the EOA that started the whole transaction chain;
+msg.sender is the immediate caller. Wallets authenticate the DIRECT
+caller — one keyword swap."""
+
+[[exercises]]
+name = "security_delegatecall"
+path = "exercises/10_security/security_delegatecall.sol"
+mode = "test"
+hint = """
+delegatecall writes through YOUR slots using the LIBRARY's layout.
+The library keeps `num` in its slot 0 — so `num` must also be the
+FIRST thing Storage declares. Declaration order IS slot order."""
+
+[[exercises]]
+name = "security_unchecked_call"
+path = "exercises/10_security/security_unchecked_call.sol"
+mode = "test"
+hint = """
+`call` returns a bool you're currently ignoring. `sent` is false when
+the recipient refuses the ETH — assert on it right after the call,
+the same way you'd check a require."""
+
+[[exercises]]
+name = "security_deadline"
+path = "exercises/10_security/security_deadline.sol"
+mode = "test"
+hint = """
+The chain's clock is `block.timestamp`. Reject the call when it has
+passed the signed deadline — one if-statement with the Expired()
+revert before anything else runs."""
+
+[[exercises]]
+name = "security_access"
+path = "exercises/10_security/security_access.sol"
+mode = "test"
+hint = """
+Default-deny: read each function's comment about who it's FOR, then
+check which one carries the wrong modifier. Only one is backwards."""
+
+# ===== 11 signatures =====
+[[exercises]]
+name = "signatures1"
+path = "exercises/11_signatures/signatures1.sol"
+mode = "test"
+hint = """
+One precompile call: give ecrecover the digest and the (v, r, s) you
+received, and return what it hands back."""
+
+[[exercises]]
+name = "signatures2"
+path = "exercises/11_signatures/signatures2.sol"
+mode = "test"
+hint = """
+keccak256 over abi.encode(...) for the padded, collision-safe hash;
+keccak256 over abi.encodePacked(...) for the tight one. Pass the
+arguments through in order."""
+
+[[exercises]]
+name = "signatures3"
+path = "exercises/11_signatures/signatures3.sol"
+mode = "test"
+hint = """
+The prefix is packed as RAW BYTES next to the inner digest —
+abi.encodePacked with the literal \"\\x19Ethereum Signed Message:\\n32\"
+string and the bytes32. Never hash the prefix first."""
+
+[[exercises]]
+name = "signatures4"
+path = "exercises/11_signatures/signatures4.sol"
+mode = "test"
+hint = """
+Follow the recipe in the header exactly: typehash, then keccak of
+each string field, then the scalars — all inside one abi.encode,
+hashed once."""
+
+[[exercises]]
+name = "signatures5"
+path = "exercises/11_signatures/signatures5.sol"
+mode = "test"
+hint = """
+hashStruct = keccak256(abi.encode(TYPEHASH, fields...)). The full
+digest packs \"\\x19\\x01\" + domainSeparator + hashStruct — note that
+two-byte header is binary, not a string to hash again."""
+
+[[exercises]]
+name = "signatures6"
+path = "exercises/11_signatures/signatures6.sol"
+mode = "test"
+hint = """
+A `used` mapping keyed by digest is the spend flag. Check it first,
+set it BEFORE the transfer — a replayed digest must hit AlreadyUsed()
+before it reaches the money."""
+
+[[exercises]]
+name = "signatures7"
+path = "exercises/11_signatures/signatures7.sol"
+mode = "test"
+hint = """
+EIP-2: valid signatures keep s in the LOWER half of the curve order.
+One bounds check on `s` against SECP256K1_N / 2, rejecting the high
+half, kills the flipped variant."""
+
+[[exercises]]
+name = "signatures8"
+path = "exercises/11_signatures/signatures8.sol"
+mode = "test"
+hint = """
+The deadline is signed but nothing enforces it. Reject the
+execution when the chain's clock has passed it — before the
+signature check even matters."""
+
+[[exercises]]
+name = "signatures9"
+path = "exercises/11_signatures/signatures9.sol"
+mode = "test"
+hint = """
+Three checks in order — consumed, expiry, recovered-signer — then
+mark the escrow consumed BEFORE returning true. The digest function
+is given: the audience is already bound into what was signed."""
+
+# ===== 12 testing =====
+[[exercises]]
+name = "testing1"
+path = "exercises/12_testing/testing1.sol"
+mode = "test"
+hint = """
+Assert the exact error: vm.expectRevert(Contract.ErrorName.selector)
+goes on the line BEFORE the reverting call. There are two errors to
+pin — Insufficient and ZeroAmount."""
+
+[[exercises]]
+name = "testing2"
+path = "exercises/12_testing/testing2.sol"
+mode = "test"
+hint = """
+vm.expectEmit(true, true, false, true); then emit the expected event
+with expected values; then perform the action that must emit it.
+The mirrored event is already declared in the test."""
+
+[[exercises]]
+name = "testing3"
+path = "exercises/12_testing/testing3.sol"
+mode = "test"
+hint = """
+vm.prank(x) makes the next call come from x (deal it ETH first with
+vm.deal). vm.deal(y, n) sets an address's balance outright.
+vm.warp(t) moves the chain's clock to timestamp t."""
+
+[[exercises]]
+name = "testing4"
+path = "exercises/12_testing/testing4.sol"
+mode = "test"
+hint = """
+Rebuild the digest exactly as the contract does (digestFor is
+public), sign it with vm.sign(SIGNER_PK, digest), then pass the
+(v, r, s) into release."""
+
+[[exercises]]
+name = "testing5"
+path = "exercises/12_testing/testing5.sol"
+mode = "test"
+hint = """
+For the fuzz test: vm.deal yourself the amount, deposit it, then
+assertEq BOTH address(vault).balance and vault.deposited(caller).
+Fuzzed arguments run the test many times — no loops needed."""
+
+# ===== 13 ownership =====
+[[exercises]]
+name = "ownership1"
+path = "exercises/13_ownership/ownership1.sol"
+mode = "test"
+hint = """
+The modifier reads like a require(!paused) then `_;`. Attach
+modifiers by name in the function header, after visibility.
+pause/unpause already have their check — they just need the
+modifier written and applied."""
+
+[[exercises]]
+name = "ownership2"
+path = "exercises/13_ownership/ownership2.sol"
+mode = "test"
+hint = """
+claim is a guarded swap: require the caller IS pendingOwner, then
+set owner to them and clear pendingOwner. Order matters — read
+pendingOwner into owner before you zero it."""
+
+[[exercises]]
+name = "ownership3"
+path = "exercises/13_ownership/ownership3.sol"
+mode = "test"
+hint = """
+The modifier takes the role as a parameter and checks the mapping:
+require(hasRole[role][msg.sender]). grantRole should carry the same
+modifier — only a holder of a role can mint more of it."""
+
+[[exercises]]
+name = "ownership4"
+path = "exercises/13_ownership/ownership4.sol"
+mode = "test"
+hint = """
+excess = address(this).balance - totalDeposits. Refuse to sweep
+when excess is zero, and never transfer more than the excess — user
+deposits are outside the sweep's reach by arithmetic."""
+
+[[exercises]]
+name = "ownership5"
+path = "exercises/13_ownership/ownership5.sol"
+mode = "test"
+hint = """
+The modifier is already there to borrow. Set owner = address(0) and
+emit Renounced() — and nothing else. address(0) can never sign, so
+the admin plane is dead permanently."""
+
+# ===== 14 payments =====
+[[exercises]]
+name = "payments1"
+path = "exercises/14_payments/payments1.sol"
+mode = "test"
+hint = """
+Mirror withdrawWithTransfer's shape but with .call{value: amount}(\"\")
+— capture the bool and require it. Effects (zeroing the debt) stay
+BEFORE the call."""
+
+[[exercises]]
+name = "payments2"
+path = "exercises/14_payments/payments2.sol"
+mode = "test"
+hint = """
+Solvency is a floor, not an equation. What comparison still holds
+when a donor adds 3 ether to a perfectly balanced bank?"""
+
+[[exercises]]
+name = "payments3"
+path = "exercises/14_payments/payments3.sol"
+mode = "test"
+hint = """
+fallback() external payable — the function with no name that catches
+everything else. Revert UnknownCall(msg.data) inside it; receive
+keeps handling the empty-calldata path."""
+
+# ===== 15 escrow =====
+[[exercises]]
+name = "escrow1"
+path = "exercises/15_escrow/escrow1.sol"
+mode = "test"
+hint = """
+Guard, then transition, then transfer — read refund() two lines
+down and write release() as its mirror: WrongState check, state
+assignment, transfer to the OTHER party."""
+
+[[exercises]]
+name = "escrow2"
+path = "exercises/15_escrow/escrow2.sol"
+mode = "test"
+hint = """
+Take an id from nextId(), store the struct (buyer is msg.sender,
+amount is msg.value, funded is true), emit the event, return the
+id. The mapping does the rest."""
+
+[[exercises]]
+name = "escrow3"
+path = "exercises/15_escrow/escrow3.sol"
+mode = "test"
+hint = """
+Same bug as reentrancy1, new clothes: flip the state to Released
+BEFORE the transfer. The guard at the top then bounces the
+re-entrant call."""
+
+[[exercises]]
+name = "escrow4"
+path = "exercises/15_escrow/escrow4.sol"
+mode = "test"
+hint = """
+WrongState check, then the clock: the buyer's window opens only
+when block.timestamp >= expiresAt (revert NotExpired before that).
+Then mirror release()'s CEI shape paying the BUYER."""
+
+[[exercises]]
+name = "escrow5"
+path = "exercises/15_escrow/escrow5.sol"
+mode = "test"
+hint = """
+release() already has its guard. refund() is missing exactly one
+line — the same WrongState check. The state transition IS the lock
+that ends the race."""
+
+[[exercises]]
+name = "escrow6"
+path = "exercises/15_escrow/escrow6.sol"
+mode = "test"
+hint = """
+resolve: three requires (arbiter, Funded state, real outcome), set
+state, then credit withdrawable[winner] += amount — NO transfers.
+withdraw: read the credit, zero it, transfer it."""
+
+# ===== 16 capstone =====
+[[exercises]]
+name = "capstone1"
+path = "exercises/16_capstone/capstone1.sol"
+mode = "test"
+hint = """
+Work the checklist in order: paused → status → replay → expiry →
+signature, all BEFORE any effect. The digest binds id, seller,
+amount, deadline — ecrecover over verdictDigest(...) and compare
+against the immutable `verifier`. refund is escrow4 with this
+contract's names. The tests ARE the interview's acceptance
+criteria."""
+
+[[exercises]]
+name = "capstone2"
+path = "exercises/16_capstone/capstone2.sol"
+mode = "test"
+hint = """
+vm.startBroadcast(); guardian = new PauseGuardian();
+vm.stopBroadcast(); — in a test broadcast behaves like a prank from
+a deterministic sender; in `forge script` the same code deploys for
+real."""
+
+[[exercises]]
+name = "capstone3"
+path = "exercises/16_capstone/capstone3.sol"
+mode = "test"
+hint = """
+deposit and releaseTo each need a paused check; withdraw needs the
+OPPOSITE change — find the line that traps users and remove it.
+The runbook: money in stops, verdicts stop, exits never do."""
