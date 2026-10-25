@@ -1,25 +1,33 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useInput, useStdout } from "ink";
+import { useInput, useStdin, useStdout } from "ink";
 import { Box, Text } from "ink";
+import { spawnSync } from "node:child_process";
+import * as path from "node:path";
 import {
     Exercise,
+    PROJECT_ROOT,
     getExercises,
     getState,
     markSolved,
-    readExerciseSource,
 } from "../state.js";
-import { RunResult, runExerciseAsync } from "../runner.js";
+import { RunResult, runExerciseAsync, summarizeForgeOutput } from "../runner.js";
 import { bus } from "./bus.js";
-import { ExercisePane } from "./ExercisePane.js";
 import { OutputPane } from "./OutputPane.js";
 import { ListView } from "./ListView.js";
 import { Footer } from "./Footer.js";
 
 type Overlay = "none" | "list";
 
+/**
+ * Compact watch dashboard. NOT a fullscreen IDE: you edit in your
+ * editor (nvim beside this in a split) — this shows status, the forge
+ * output, hints, and progress, sized to whatever pane it's given.
+ */
 export function App() {
     const { stdout: stdoutRaw } = useStdout();
+    const { stdin: stdinRaw } = useStdin();
     const stdout = stdoutRaw as NodeJS.WriteStream;
+    const stdin = stdinRaw as NodeJS.ReadStream & { pause(): void; resume(): void };
 
     const exercises = useMemo<Exercise[]>(() => getExercises(), []);
     const [solved, setSolved] = useState<Set<string>>(() => new Set(getState().solved));
@@ -29,7 +37,6 @@ export function App() {
 
     const [result, setResult] = useState<RunResult | null>(null);
     const [running, setRunning] = useState(false);
-    const [source, setSource] = useState<string>(() => readExerciseSource(exercises[0] ?? ({} as Exercise)));
     const [showHint, setShowHint] = useState(false);
     const [overlay, setOverlay] = useState<Overlay>("none");
     const [scrollFromBottom, setScrollFromBottom] = useState(0);
@@ -42,7 +49,6 @@ export function App() {
     useEffect(() => {
         if (!current) return;
         const runId = ++runIdRef.current;
-        setSource(readExerciseSource(current));
         setRunning(true);
         setScrollFromBottom(0);
 
@@ -51,13 +57,10 @@ export function App() {
             if (cancelled || runId !== runIdRef.current) return;
             setRunning(false);
             setResult(res);
-            if (res.ok) {
-                const before = solved.has(current.name);
-                if (!before) {
-                    markSolved(current);
-                    setSolved((prev) => new Set(prev).add(current.name));
-                    setNewlySolvedFlash(current.name);
-                }
+            if (res.ok && !solved.has(current.name)) {
+                markSolved(current);
+                setSolved((prev) => new Set(prev).add(current.name));
+                setNewlySolvedFlash(current.name);
             }
         });
         return () => {
@@ -85,10 +88,7 @@ export function App() {
         return bus.subscribe((name) => {
             const i = exercises.findIndex((e) => e.name === name);
             if (i === -1) return;
-            setIdx((cur) => {
-                if (cur !== i) setSource(readExerciseSource(exercises[i]));
-                return i;
-            });
+            setIdx(i);
             setRunSeq((s) => s + 1);
         });
     }, [exercises]);
@@ -107,6 +107,33 @@ export function App() {
         if (i < 0 || i >= exercises.length || i === idx) return;
         setOverlay("none");
         setIdx(i);
+    };
+
+    /**
+     * Open the current exercise in $EDITOR (nvim, etc). Hand the
+     * terminal over: raw mode off, stdin paused, screen cleared —
+     * the editor gets a clean terminal. On exit, restore and re-run.
+     */
+    const openInEditor = () => {
+        const editor = process.env.EDITOR || process.env.VISUAL || "vi";
+        const file = path.resolve(PROJECT_ROOT, current.path);
+        try {
+            stdin.setRawMode(false);
+            stdin.pause();
+            process.stdout.write("\x1b[2J\x1b[H"); // clear for the editor
+            spawnSync(editor, [file], { stdio: "inherit" });
+        } catch {
+            // editor failed to launch — restore anyway
+        } finally {
+            stdin.resume();
+            try {
+                stdin.setRawMode(true);
+            } catch {
+                /* already restored */
+            }
+            console.clear();
+            setRunSeq((s) => s + 1); // re-run on return
+        }
     };
 
     // ---- key routing ----
@@ -136,6 +163,9 @@ export function App() {
             case "l":
                 setOverlay("list");
                 break;
+            case "e":
+                if (!running) openInEditor();
+                break;
             case "q":
                 process.exit(0);
                 break;
@@ -158,43 +188,52 @@ export function App() {
 
     const cols = stdout.columns || 100;
     const rows = stdout.rows || 40;
-    const sideBySide = cols >= 120;
 
     const hintLines = showHint && current.hint ? current.hint.trim().split("\n") : [];
     const hintH = hintLines.length > 0 ? Math.min(hintLines.length + 2, 8) : 0;
-    const footerH = 2;
-    const bodyRows = Math.max(10, rows - footerH - hintH);
 
-    const codeH = sideBySide ? bodyRows - 2 : Math.max(8, Math.floor(bodyRows * 0.4)) - 2;
-    const outH = bodyRows - (sideBySide ? 2 : codeH + 2) - 2;
+    // header (1) + status (1) + footer (2) + output borders (2)
+    const outH = Math.max(3, rows - 6 - hintH);
+    const outW = cols - 4;
 
-    const codeW = sideBySide ? Math.floor(cols / 2) - 3 : cols - 4;
-    const outW = sideBySide ? cols - Math.floor(cols / 2) - 3 : cols - 4;
-
-    const status: "running" | "pass" | "fail" = running ? "running" : result ? (result.ok ? "pass" : "fail") : "running";
+    const status: "running" | "pass" | "fail" = running
+        ? "running"
+        : result
+          ? (result.ok ? "pass" : "fail")
+          : "running";
     const solvedCount = exercises.filter((e) => solved.has(e.name)).length;
 
-    const title = `Exercise ${idx + 1}/${exercises.length} · ${current.name} · ${current.path}`;
+    const statusColor = status === "pass" ? "green" : status === "fail" ? "red" : "yellow";
+    const statusText =
+        status === "running"
+            ? "● running…"
+            : status === "pass"
+              ? `✓ PASS · ${summarizeForgeOutput(result?.output ?? "")}`
+              : result?.timedOut
+                ? "✗ FAIL · TIMEOUT"
+                : `✗ FAIL · ${summarizeForgeOutput(result?.output ?? "")}`;
 
     return (
         <Box flexDirection="column" height={rows}>
-            <Box flexDirection={sideBySide ? "row" : "column"} flexGrow={1}>
-                <ExercisePane
-                    title={title}
-                    source={source}
-                    width={codeW}
-                    height={codeH}
-                    flash={newlySolvedFlash === current.name}
-                />
-                <OutputPane
-                    output={result?.output ?? ""}
-                    status={status}
-                    timedOut={result?.timedOut ?? false}
-                    width={outW}
-                    height={outH}
-                    scrollFromBottom={scrollFromBottom}
-                />
-            </Box>
+            <Text bold color={newlySolvedFlash === current.name ? "green" : "cyan"}>
+                {`Exercise ${idx + 1}/${exercises.length}`} · {current.name} ·{" "}
+                <Text dimColor>{current.path}</Text>
+            </Text>
+            <Text color={statusColor} bold={status !== "running"}>
+                {statusText}
+                {result && !running ? (
+                    <Text dimColor> ({(result.durationMs / 1000).toFixed(1)}s)</Text>
+                ) : null}
+            </Text>
+
+            <OutputPane
+                output={result?.output ?? ""}
+                status={status}
+                timedOut={result?.timedOut ?? false}
+                width={outW}
+                height={outH}
+                scrollFromBottom={scrollFromBottom}
+            />
 
             {hintLines.length > 0 && (
                 <Box borderStyle="round" borderColor="yellow" flexDirection="column" height={hintH} paddingLeft={1}>

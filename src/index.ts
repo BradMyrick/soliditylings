@@ -4,7 +4,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { execSync } from "node:child_process";
+import { execSync, spawnSync } from "node:child_process";
 import {
     Exercise,
     PROJECT_ROOT,
@@ -115,6 +115,49 @@ program
         console.log(chalk.bold.yellow(`\nHint for ${target.name}:`));
         console.log(target.hint || chalk.gray("No hint available for this exercise."));
         console.log("");
+    });
+
+program
+    .command("edit")
+    .description("Open an exercise in $EDITOR (defaults to vi) — pairs with `watch` in another pane")
+    .argument("[name]", "Name of the exercise to edit (default: next pending)")
+    .action((name: string | undefined) => {
+        const exercises = getExercises();
+        const state = getState();
+
+        const target = name
+            ? exercises.find((e) => e.name === name)
+            : nextPending(exercises, state.solved);
+
+        if (!target) {
+            console.log(chalk.green("🎉 All exercises completed! Nothing to edit."));
+            return;
+        }
+
+        const editor = process.env.EDITOR || process.env.VISUAL || "vi";
+        const file = path.resolve(PROJECT_ROOT, target.path);
+        console.log(chalk.blue(`Opening ${target.path} in ${editor}...`));
+        const { status } = spawnSync(editor, [file], { stdio: "inherit" });
+        if (status !== 0 && status !== null) process.exitCode = status;
+    });
+
+program
+    .command("path")
+    .description("Print an exercise's file path — e.g. nvim $(soliditylings path)")
+    .argument("[name]", "Name of the exercise (default: next pending)")
+    .action((name: string | undefined) => {
+        const exercises = getExercises();
+        const state = getState();
+
+        const target = name
+            ? exercises.find((e) => e.name === name)
+            : nextPending(exercises, state.solved);
+
+        if (!target) {
+            console.log(chalk.green("🎉 All exercises completed!"));
+            return;
+        }
+        console.log(path.resolve(PROJECT_ROOT, target.path));
     });
 
 program
