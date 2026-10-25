@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.38;
+
+// functions1
+// A Solidity function declaration reads inside-out:
+//
+//   function name(params) <visibility> <mutability> returns (Type)
+//
+// Visibility says WHO can call it; mutability says WHAT it may do.
+// `pure` is the strictest mutability: no reading state, no writing state.
+//
+// TODO: Write a function named `sayHello` that is public, pure,
+// returns a `string memory`, and returns exactly "Hello, world!".
+
 import "forge-std/Test.sol";
 
-// functions1.sol
-// Make me compile and pass the test!
-
 contract Functions1 {
-    // TODO: Write a function named `sayHello` that:
-    // 1. Is public
-    // 2. Returns a string memory
-    // 3. Does not modify state (pure)
-    // 4. Returns exactly "Hello, world!"
-    
+    // TODO: write `sayHello` here
+
 }
 
 contract Functions1Test is Test {

@@ -1,9 +1,22 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
-import "forge-std/Test.sol";
+pragma solidity ^0.8.38;
 
-// modifiers1.sol
-// Make me compile and pass the test!
+// modifiers1
+// A modifier wraps a function with reusable pre/post logic. The `_;`
+// placeholder marks where the decorated function's body runs.
+//
+//   modifier onlyOwner() {
+//       require(msg.sender == owner, "Not owner");
+//       _;
+//   }
+//
+// Modifiers are how access control is expressed idiomatically.
+//
+// TODO: 1. Write a modifier `onlyOwner` that reverts if the caller is
+//          not `owner`.
+//       2. Apply it to `changeState`.
+
+import "forge-std/Test.sol";
 
 contract Modifiers1 {
     address public owner;
@@ -13,11 +26,10 @@ contract Modifiers1 {
         owner = msg.sender;
     }
 
-    // TODO: Write a modifier named `onlyOwner` that reverts
-    // if `msg.sender` is not the `owner`. Use a standard `require`.
-    
+    // TODO: write the `onlyOwner` modifier
 
-    // TODO: Apply your modifier to this function.
+
+    // TODO: apply your modifier to this function
     function changeState() public {
         changed = true;
     }
