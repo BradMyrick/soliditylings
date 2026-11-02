@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// capstone3 — the recovery runbook, executable
+// capstone3 - the recovery runbook, executable
 // A pause that traps user funds is a hostage situation, not a circuit
 // breaker. The recovery doctrine this curriculum trains:
 //
@@ -16,7 +16,7 @@ pragma solidity ^0.8.38;
 // while user withdrawals are frozen with it. This drill encodes the
 // runbook as a test you can point to in an audit review.
 //
-// TODO: Fix the pause wiring — deposit and releaseTo must respect the
+// TODO: Fix the pause wiring - deposit and releaseTo must respect the
 // pause; withdraw must NOT. Keep checks-effects-interactions in
 // withdraw.
 
@@ -58,7 +58,7 @@ contract RecoveryVault {
         payable(to).transfer(amount);
     }
 
-    // BROKEN: the pause freezes the EXIT — users are trapped
+    // BROKEN: the pause freezes the EXIT - users are trapped
     function withdraw() external {
         require(!paused, Paused()); // TODO: the exit must never be pausable
 

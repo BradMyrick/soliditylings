@@ -36,7 +36,7 @@ contract TimeoutEscrow {
         payable(e.seller).transfer(e.amount);
     }
 
-    // FIXED: self-serve — after the clock runs out, ANYONE can trigger
+    // FIXED: self-serve - after the clock runs out, ANYONE can trigger
     // the buyer's exit. No permission checks beyond state + clock.
     function refund(bytes32 id) external {
         Escrow storage e = escrows[id];

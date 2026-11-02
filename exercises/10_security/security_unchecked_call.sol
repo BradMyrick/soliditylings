@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// security_unchecked_call — AUDIT FINDING: "unchecked low-level call"
+// security_unchecked_call - AUDIT FINDING: "unchecked low-level call"
 // `call` returns a bool and SWALLOWS the failure when you ignore it.
 // A payout that "succeeded" while silently failing is a fund-loss
 // finding: the state says paid, the recipient got nothing (or the
-// opposite — state rolled forward, money stayed).
+// opposite - state rolled forward, money stayed).
 //
 // TODO: Check the return value of the `call` in `withdraw` and revert
 // with "Transfer failed" when it is false. The Rejector contract in
@@ -54,7 +54,7 @@ contract UncheckedCallTest is Test {
 
     function testWithdrawToRejectorReverts() public {
         faucet.credit(address(rejector), 1 ether);
-        // The Rejector can't receive ETH — the withdraw must revert,
+        // The Rejector can't receive ETH - the withdraw must revert,
         // not silently "succeed" while keeping the money.
         vm.prank(address(rejector));
         vm.expectRevert();

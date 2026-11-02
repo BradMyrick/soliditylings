@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// ownership1 — the pause switch
+// ownership1 - the pause switch
 // "Audits and releases: ... with deployment scripts, a pause switch
 // and a recovery runbook alongside." The pause is the circuit breaker
-// every release ships with — a modifier pair:
+// every release ships with - a modifier pair:
 //
-//   whenNotPaused  — guards the actions you want to freeze
-//   onlyOwner      — guards pause()/unpause() themselves
+//   whenNotPaused  - guards the actions you want to freeze
+//   onlyOwner      - guards pause()/unpause() themselves
 //
 // Note the pause is DENIAL, not THEFT: pausing blocks actions, it
 // never redirects funds.

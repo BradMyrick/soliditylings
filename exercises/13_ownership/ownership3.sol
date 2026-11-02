@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// ownership3 — role separation
+// ownership3 - role separation
 // One owner doing everything is a single point of failure AND a single
 // point of compromise. Real systems split powers into roles so a leak
 // of one key can't do everything: the PAUSER key (hot, can halt) is
@@ -10,7 +10,7 @@ pragma solidity ^0.8.38;
 //
 //   keccak256("PAUSER_ROLE"), keccak256("VERIFIER_ROLE")
 //
-// (OpenZeppelin's AccessControl is exactly this — you're building the
+// (OpenZeppelin's AccessControl is exactly this - you're building the
 // 20-line core so the interview answer is muscle memory.)
 //
 // TODO: 1. Write the `onlyRole(bytes32)` modifier.
@@ -31,11 +31,11 @@ contract Roles {
         hasRole[VERIFIER_ROLE][msg.sender] = true;
     }
 
-    // TODO: onlyRole modifier — revert "missing role" when the caller
+    // TODO: onlyRole modifier - revert "missing role" when the caller
     // lacks the given role.
 
 
-    // TODO: grant — restricted so only a holder of `role` (or the
+    // TODO: grant - restricted so only a holder of `role` (or the
     // role's own members) can mint more of it
     function grantRole(bytes32 role, address who) external {
         hasRole[role][who] = true;

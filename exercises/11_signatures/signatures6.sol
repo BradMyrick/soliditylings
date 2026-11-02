@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// signatures6 — replay protection
+// signatures6 - replay protection
 // A valid signature is valid FOREVER. If your contract accepts the
-// same (digest, v, r, s) twice, the second use is a replay — money
+// same (digest, v, r, s) twice, the second use is a replay - money
 // leaves twice on one signature. Every signature scheme needs a
 // spend flag: a nonce consumed atomically with the action.
 //
 // TODO: Track consumed signatures in `used` (the digest is a natural
 // key). `claim` must (1) reject a used digest with `AlreadyUsed()` and
-// (2) mark it used before paying — checks-effects-interactions
+// (2) mark it used before paying - checks-effects-interactions
 // applies to signatures too.
 
 import "forge-std/Test.sol";

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// security_txorigin — AUDIT FINDING: "tx.origin authentication"
+// security_txorigin - AUDIT FINDING: "tx.origin authentication"
 // `tx.origin` is the EOA that STARTED the transaction chain;
 // `msg.sender` is the immediate caller. Authenticating with tx.origin
 // means: if an owner ever calls ANY attacker contract, that contract
 // can call THIS wallet "as" the owner mid-chain. That's phishing with
-// on-chain consequences — EIP-3074/7702 make it worse, not better.
+// on-chain consequences - EIP-3074/7702 make it worse, not better.
 //
 // Rule: authenticate with msg.sender, never tx.origin.
 //

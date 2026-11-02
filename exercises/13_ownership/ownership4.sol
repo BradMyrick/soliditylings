@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// ownership4 — bounded administration ("sweep safely")
+// ownership4 - bounded administration ("sweep safely")
 // The Saifuro requirement, verbatim: "no path in which Saifuro can
 // move a counterparty's money." Escrows still need an operational
-// sweep (rounding dust, misplaced transfers) — the audited shape is a
+// sweep (rounding dust, misplaced transfers) - the audited shape is a
 // sweep that mathematically CANNOT exceed the protocol's own excess:
 //
 //   excess = contract balance − sum(user deposits)
 //
-// The broken version below sweeps the whole balance — users' money
+// The broken version below sweeps the whole balance - users' money
 // included. Your fix: never let the sweep cross `totalDeposits`.
 //
 // TODO: Rewrite `sweep` so it can only take funds above
@@ -33,7 +33,7 @@ contract Sweepable {
 
     function depositFor(address user) external payable {
         require(msg.value > 0, "empty");
-        // (per-user bookkeeping omitted — aggregate is what matters here)
+        // (per-user bookkeeping omitted - aggregate is what matters here)
         totalDeposits += msg.value;
     }
 
@@ -57,7 +57,7 @@ contract Ownership4Test is Test {
     function testUsersMoneyIsUntouchable() public {
         vault.depositFor{value: 5 ether}(address(0xA));
 
-        vm.expectRevert(); // no excess exists — sweep must refuse
+        vm.expectRevert(); // no excess exists - sweep must refuse
         vault.sweep(ops);
 
         assertEq(address(vault).balance, 5 ether, "not a wei moves");

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// escrow3 — releasing under attack
-// The release path pays an EXTERNAL address — and in an escrow, one
+// escrow3 - releasing under attack
+// The release path pays an EXTERNAL address - and in an escrow, one
 // or both parties may be a CONTRACT. The Attacker below re-enters
 // `release` from its receive hook. You know this bug from
 // reentrancy1; this time it's wearing escrow clothes: state machine

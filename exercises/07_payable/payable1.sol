@@ -16,7 +16,7 @@ import "forge-std/Test.sol";
 contract Payable1 {
     // TODO: accept ETH here
     function deposit() public {
-        // No body needed — receiving the ETH is the point.
+        // No body needed - receiving the ETH is the point.
     }
 }
 

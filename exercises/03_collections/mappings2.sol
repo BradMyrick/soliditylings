@@ -3,7 +3,7 @@ pragma solidity ^0.8.38;
 
 // mappings2
 // Mappings compose: the value of a mapping can itself be a mapping.
-// This is exactly how ERC-20 approvals work —
+// This is exactly how ERC-20 approvals work -
 // `allowance[owner][spender] = amount`.
 //
 // TODO: 1. Declare a public nested mapping: address => address => uint256,
@@ -30,7 +30,7 @@ contract Mappings2Test is Test {
     }
 
     function testNestedRead() public {
-        // The public getter works on nested mappings too — it just takes
+        // The public getter works on nested mappings too - it just takes
         // both keys in order.
         assertEq(target.allowance(address(1), address(2)), 0, "unset pair is 0");
         assertTrue(target.getAllowance(address(1), address(2)) == target.allowance(address(1), address(2)));

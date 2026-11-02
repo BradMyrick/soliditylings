@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// ownership2 — two-step ownership transfer
+// ownership2 - two-step ownership transfer
 // `transferOwnership(newOwner)` in ONE step has a failure mode every
 // auditor knows: send it to a mistyped or dead address and the contract
-// is ownerless forever — bricked admin plane (this literally froze
+// is ownerless forever - bricked admin plane (this literally froze
 // millions in Vyper settings contracts). The two-step pattern makes
 // the mistake recoverable:
 //
@@ -14,7 +14,7 @@ pragma solidity ^0.8.38;
 // If the new owner is wrong, it simply never claims; the real owner
 // proposes someone else.
 //
-// TODO: Implement `claimOwnership` — only the pending owner may claim,
+// TODO: Implement `claimOwnership` - only the pending owner may claim,
 // and claiming must atomically install them AND clear the proposal.
 
 import "forge-std/Test.sol";
@@ -40,7 +40,7 @@ contract TwoStepOwnable {
         emit OwnershipProposed(candidate);
     }
 
-    // TODO: claim — only pendingOwner; installs and clears the proposal
+    // TODO: claim - only pendingOwner; installs and clears the proposal
     function claimOwnership() external {
     }
 }

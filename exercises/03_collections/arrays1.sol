@@ -19,7 +19,7 @@ contract Arrays1 {
         // TODO: append `number`
     }
 
-    // Reading `.length` from OUTSIDE is impossible on a public array —
+    // Reading `.length` from OUTSIDE is impossible on a public array -
     // the auto-getter only serves `numbers(index)`. Internally, it's fine.
     function count() public view returns (uint256) {
         return numbers.length;

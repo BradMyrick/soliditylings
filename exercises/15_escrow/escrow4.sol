@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// escrow4 — self-serve refunds ("refunds that work without us")
+// escrow4 - self-serve refunds ("refunds that work without us")
 // The Saifuro spec: refunds must work WITHOUT the platform. If the
 // verdict never comes, the buyer isn't stranded waiting on an
-// operator — the CHAIN lets them out. The pattern: a deadline baked
+// operator - the CHAIN lets them out. The pattern: a deadline baked
 // in at funding, and a permissionless refund path anyone can trigger
 // on the buyer's behalf (pull payment to the buyer either way).
 //
 //   require(block.timestamp >= e.expiresAt, "not expired");
 //
-// TODO: Implement `refund` — only after the deadline, only from
+// TODO: Implement `refund` - only after the deadline, only from
 // Funded, CEI ordering, pays the BUYER (whoever calls it).
 
 import "forge-std/Test.sol";
@@ -48,7 +48,7 @@ contract TimeoutEscrow {
         payable(e.seller).transfer(e.amount);
     }
 
-    // TODO: self-serve refund — after expiry, pay the buyer. No
+    // TODO: self-serve refund - after expiry, pay the buyer. No
     // permission checks beyond the state + clock (that's the point).
     function refund(bytes32 id) external {
     }
@@ -85,7 +85,7 @@ contract Escrow4Test is Test {
         bytes32 id = fundDefault();
         vm.warp(block.timestamp + 8 days);
 
-        // NOTE: called by a total stranger — refunds work without us.
+        // NOTE: called by a total stranger - refunds work without us.
         address stranger = makeAddr("stranger");
         vm.prank(stranger);
         escrow.refund(id);
@@ -100,6 +100,6 @@ contract Escrow4Test is Test {
         vm.warp(block.timestamp + 8 days);
 
         vm.expectRevert(TimeoutEscrow.NotExpired.selector);
-        escrow.release(id); // too late — seller cannot outrun the refund
+        escrow.release(id); // too late - seller cannot outrun the refund
     }
 }

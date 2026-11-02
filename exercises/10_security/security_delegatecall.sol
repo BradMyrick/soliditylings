@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// security_delegatecall — AUDIT FINDING: "storage collision via delegatecall"
+// security_delegatecall - AUDIT FINDING: "storage collision via delegatecall"
 // `delegatecall` executes another contract's code against YOUR storage
-// — same msg.sender, same msg.value, but the callee's storage layout
+// - same msg.sender, same msg.value, but the callee's storage layout
 // is copied over yours slot by slot. If the layouts don't match
 // EXACTLY, the callee writes its slot 0 into whatever YOU keep in
 // slot 0.
 //
-// Below, the library writes to its slot 0 (`num`) — but in Storage the
+// Below, the library writes to its slot 0 (`num`) - but in Storage the
 // slot 0 belongs to `owner`. Calling setNum clobbers the owner.
 // (This exact bug pattern bricked Parity's multi-sig in 2017.)
 //
@@ -27,7 +27,7 @@ contract NumberLibrary {
 }
 
 contract Storage {
-    address public owner; // slot 0 — COLLIDES with library's num
+    address public owner; // slot 0 - COLLIDES with library's num
     uint256 public num; // slot 1
     NumberLibrary public lib; // slot 2
 

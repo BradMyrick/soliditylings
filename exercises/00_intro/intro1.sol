@@ -8,13 +8,13 @@ pragma solidity ^0.8.38;
 // fix the code, and the test beside it turns green.
 //
 // This first one is simple: the contract below is missing its closing
-// brace. Solidity is block-scoped — every `{` needs its `}`. Make the
+// brace. Solidity is block-scoped - every `{` needs its `}`. Make the
 // file compile and the test passes.
 
 import "forge-std/Test.sol";
 
 contract Intro1 {
-    // Nothing to do in here — just close the contract properly.
+    // Nothing to do in here - just close the contract properly.
     uint256 public welcome;
 
 contract Intro1Test is Test {

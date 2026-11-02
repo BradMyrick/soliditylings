@@ -10,7 +10,7 @@ contract Bank {
         totalOwed += msg.value;
     }
 
-    // FIXED: solvency is a FLOOR, not an exact figure — donations are
+    // FIXED: solvency is a FLOOR, not an exact figure - donations are
     // surplus, never a brick.
     function solvent() external view returns (bool) {
         return address(this).balance >= totalOwed;

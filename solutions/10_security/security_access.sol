@@ -17,10 +17,10 @@ contract TipJar {
         _;
     }
 
-    // FIXED: open to everyone — tips are tips.
+    // FIXED: open to everyone - tips are tips.
     function deposit() external payable {}
 
-    // FIXED: owner-only — where the money goes.
+    // FIXED: owner-only - where the money goes.
     function setTreasury(address t) external onlyOwner {
         treasury = t;
     }

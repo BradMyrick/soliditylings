@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// signatures8 — expiry
+// signatures8 - expiry
 // A signature that never expires is a liability that never expires.
 // Standard practice (EIP-2612 permit did it first): the deadline is
 // PART OF the signed payload, and the contract enforces it against
@@ -9,12 +9,12 @@ pragma solidity ^0.8.38;
 // chain enforces the bound.
 //
 // Block timestamp notes for the interview: it's set by the block
-// proposer, monotonic within a chain, and can drift ~a few seconds —
+// proposer, monotonic within a chain, and can drift ~a few seconds -
 // fine for deadlines, never fine for randomness.
 //
 // TODO: `execute` must revert with `Expired()` when the deadline has
 // passed. The deadline is already inside the digest, so the signer
-// chose it — you just have to enforce it.
+// chose it - you just have to enforce it.
 
 import "forge-std/Test.sol";
 

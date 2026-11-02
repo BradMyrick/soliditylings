@@ -33,7 +33,7 @@ contract RaceEscrow {
         payable(e.seller).transfer(e.amount);
     }
 
-    // FIXED: the missing state guard — the state transition IS the lock
+    // FIXED: the missing state guard - the state transition IS the lock
     function refund(bytes32 id) external {
         Escrow storage e = escrows[id];
         if (e.state != State.Funded) revert WrongState();

@@ -5,14 +5,14 @@ pragma solidity ^0.8.38;
 // Data location. Reference types (arrays, structs, strings, mappings)
 // must say WHERE they live:
 //
-//   storage    — contract state, persistent, expensive
-//   memory     — a fresh temporary copy, dies with the call
-//   calldata   — read-only slice of the transaction input, cheapest
+//   storage    - contract state, persistent, expensive
+//   memory     - a fresh temporary copy, dies with the call
+//   calldata   - read-only slice of the transaction input, cheapest
 //
 // The compiler refuses to guess. `string greeting` below has no home.
 //
 // TODO: Give `greeting` a data location. It only needs to exist for
-// the duration of this call, and we don't mutate it — but `memory`
+// the duration of this call, and we don't mutate it - but `memory`
 // is the conventional first answer for internal functions.
 
 import "forge-std/Test.sol";

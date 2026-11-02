@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// capstone1 — THE ESCROW (everything you've trained for)
+// capstone1 - THE ESCROW (everything you've trained for)
 // One contract on Base: funds held until a signed verdict releases
 // them, refunds that work without the platform, and no path where
 // the operator can move a counterparty's money.
 //
-//   signature — EIP-712 typed verdict signed by the trusted verifier
-//   audience  — the digest binds (escrowId, recipient): verdicts
+//   signature - EIP-712 typed verdict signed by the trusted verifier
+//   audience  - the digest binds (escrowId, recipient): verdicts
 //               cannot be replayed across escrows or redirected
-//   expiry    — the verdict's deadline is signed and enforced
-//   refund    — self-serve after the escrow's own deadline: permissionless
-//   pause     — the operator can FREEZE new actions, never REDIRECT funds
+//   expiry    - the verdict's deadline is signed and enforced
+//   refund    - self-serve after the escrow's own deadline: permissionless
+//   pause     - the operator can FREEZE new actions, never REDIRECT funds
 //
 // The digest machinery is given (you built it in signatures4/5).
 // Your job is the enforcement. Trace every check before you write it:
@@ -124,9 +124,9 @@ contract VerdictEscrow {
 
     // ---------- TODO: the verdict release ----------
     // The CTO's key signs verdictDigest(id, seller, escrowAmount, deadline).
-    // Note the digest binds the ESCROW'S OWN amount — a verdict always
+    // Note the digest binds the ESCROW'S OWN amount - a verdict always
     // names the full deal, so partial releases cannot strand funds.
-    // Enforce, in order: pause, status, replay, expiry, signature —
+    // Enforce, in order: pause, status, replay, expiry, signature -
     // then pay. CEI. Emit Released.
     function releaseWithVerdict(
         bytes32 id,
@@ -151,7 +151,7 @@ contract VerdictEscrow {
     }
 
     // ---------- TODO: the self-serve refund ----------
-    // After refundAfter, the buyer exits WITHOUT anyone's permission —
+    // After refundAfter, the buyer exits WITHOUT anyone's permission -
     // and a pause must NOT trap user funds (read the runbook note in
     // capstone3 before deciding whether refund checks `paused`).
     function refund(bytes32 id) external {
@@ -291,7 +291,7 @@ contract Capstone1Test is Test {
     }
 
     function testOperatorCannotSteal() public {
-        // The operator's ONLY powers are pause/unpause — there is no
+        // The operator's ONLY powers are pause/unpause - there is no
         // path from operator to funds. This test is the requirement.
         bytes32 id = createDefault();
         escrow.setPaused(true);

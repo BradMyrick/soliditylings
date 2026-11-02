@@ -15,7 +15,7 @@ contract NumberLibrary {
 contract Storage {
     // FIXED layout: slot 0 mirrors the library's slot 0, so the
     // delegated write lands on `num` and never on `owner`.
-    uint256 public num; // slot 0 — aligned with NumberLibrary.num
+    uint256 public num; // slot 0 - aligned with NumberLibrary.num
     address public owner; // slot 1
     NumberLibrary public lib; // slot 2
 

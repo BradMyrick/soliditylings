@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// capstone2 — the deployment script + pause switch
+// capstone2 - the deployment script + pause switch
 // "Audits and releases: ... with deployment scripts, a pause switch
 // and a recovery runbook alongside." Ship shape:
 //
-//   script/  — deterministic deploy under broadcast
-//   tests    — a script's run() is just code: CALL it from a test and
+//   script/  - deterministic deploy under broadcast
+//   tests    - a script's run() is just code: CALL it from a test and
 //              assert the deployment came up healthy, pause included
 //
-// TODO: Complete `run` — deploy the PauseGuardian under broadcast and
+// TODO: Complete `run` - deploy the PauseGuardian under broadcast and
 // store it in `guardian`. (In a forge TEST, broadcast pranks from a
 // deterministic sender; in `forge script` it signs and sends for real
-// — the same code ships both ways.)
+// - the same code ships both ways.)
 
 import "forge-std/Test.sol";
 import {Script} from "forge-std/Script.sol";
@@ -61,7 +61,7 @@ contract Capstone2Test is Test {
     function testPauseSwitchWorks() public {
         PauseGuardian g = deploy();
 
-        // Whoever broadcast the deploy is the operator — act as them.
+        // Whoever broadcast the deploy is the operator - act as them.
         vm.prank(g.operator());
         g.setPaused(true);
         assertTrue(g.paused());

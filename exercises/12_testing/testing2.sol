@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// testing2 — event assertions
-// Events are your observability layer — indexers, runbooks, and audit
+// testing2 - event assertions
+// Events are your observability layer - indexers, runbooks, and audit
 // evidence all read them. A test that checks state but not events can
 // pass while the receipt tells operators nothing.
 //
@@ -10,7 +10,7 @@ pragma solidity ^0.8.38;
 //   emit Deposit(expectedEmitter, expectedAmount); // what we expect
 //   vault.deposit{value: 1 ether}();               // when we expect it
 //
-// TODO: Complete `testDepositEmits` — expect the Deposit event with
+// TODO: Complete `testDepositEmits` - expect the Deposit event with
 // the depositor and amount, then make the deposit that fires it.
 
 import "forge-std/Test.sol";

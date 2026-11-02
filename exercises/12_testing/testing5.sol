@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// testing5 — fuzzing & invariants (Foundry's superpower)
-// Property tests don't check examples — they check LAWS:
+// testing5 - fuzzing & invariants (Foundry's superpower)
+// Property tests don't check examples - they check LAWS:
 //
 //   fuzz test:   for ANY input the compiler can generate, X holds
 //   invariant:   after ANY sequence of handler calls, X still holds
 //
-// The handler below tracks a GHOST VARIABLE — the total a depositor
-// has actually deposited — and the invariant asserts the vault's
+// The handler below tracks a GHOST VARIABLE - the total a depositor
+// has actually deposited - and the invariant asserts the vault's
 // bookkeeping can never drift from it, no matter what sequence of
 // deposits forge throws at it. That drift-proof bookkeeping is the
 // foundation of "the operator can never move depositor funds": there

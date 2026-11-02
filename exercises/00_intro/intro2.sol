@@ -5,7 +5,7 @@ pragma solidity ^0.8.38;
 // Tests are contracts too!
 //
 // soliditylings runs Foundry (forge) behind the scenes, so every exercise
-// carries its own test contract — you fix the code until the test passes.
+// carries its own test contract - you fix the code until the test passes.
 //
 // This one fails an assertion: `returnTrue()` says `false`, but the test
 // expects `true`. Flip it.

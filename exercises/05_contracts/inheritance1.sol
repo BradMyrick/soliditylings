@@ -7,7 +7,7 @@ pragma solidity ^0.8.38;
 // signature and be marked `override`.
 //
 // The payoff is polymorphism: a `Dog` IS an `Animal`, so you can treat
-// it as one — and the override still fires. The test relies on that.
+// it as one - and the override still fires. The test relies on that.
 //
 // TODO: 1. Make `Dog` inherit from `Animal`.
 //       2. Override `speak` to return "Woof!".
@@ -32,7 +32,7 @@ contract Inheritance1Test is Test {
     }
 
     function testPolymorphism() public {
-        // A Dog can be stored in an Animal variable — virtual dispatch
+        // A Dog can be stored in an Animal variable - virtual dispatch
         // still calls the override.
         Animal animal = new Dog();
         assertEq(animal.speak(), "Woof!", "the Dog override must fire");

@@ -5,8 +5,8 @@ pragma solidity ^0.8.38;
 // Two special functions catch plain ETH transfers (calls with empty
 // calldata):
 //
-//   receive() external payable {}  — called on transfers with NO data
-//   fallback() external payable {} — called when nothing else matches
+//   receive() external payable {}  - called on transfers with NO data
+//   fallback() external payable {} - called when nothing else matches
 //
 // A contract without either REJECTS plain transfers. `receive` is the
 // one you want for "this contract can be paid."

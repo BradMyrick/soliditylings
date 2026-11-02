@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// payments3 — receive vs fallback dispatch
+// payments3 - receive vs fallback dispatch
 // The two special functions form a decision tree for incoming calls:
 //
 //   calldata empty   → receive()  (if it exists)
 //   calldata unknown → fallback() (if it exists)
 //   neither matches  → revert
 //
-// A missing fallback means random selectors revert loudly — which is
+// A missing fallback means random selectors revert loudly - which is
 // what you WANT on a payments contract (silent success on garbage
 // calldata is how "accidental transfer + wrong function" funds get
 // stuck). Here we make the dispatch explicit.

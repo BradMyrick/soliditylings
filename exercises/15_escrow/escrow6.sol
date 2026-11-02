@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// escrow6 — the arbiter (mini-capstone of the section)
+// escrow6 - the arbiter (mini-capstone of the section)
 // A full mini-escrow in the classic three-party shape: buyer, seller,
 // arbiter. The twist that makes it SAFE rather than 2016-vintage:
-// PULL payments. Nobody is ever PUSHED ETH mid-transaction — the
+// PULL payments. Nobody is ever PUSHED ETH mid-transaction - the
 // resolution only moves ACCOUNTING, and each party collects their own
 // winnings. Push pays attackers; pull pays payees.
 //
-// TODO: Implement `resolve` — either outcome (release or refund)
+// TODO: Implement `resolve` - either outcome (release or refund)
 // updates the escrow's withdrawable accounting and its state, and
 // nothing else. Then implement `withdraw` for the winning party.
 //
 //   checks:    only arbiter, only Funded, only the two outcomes
 //   effects:   set state, credit the winner's withdrawable
-//   (no interactions here at all — that's the pattern)
+//   (no interactions here at all - that's the pattern)
 
 import "forge-std/Test.sol";
 
@@ -32,7 +32,7 @@ contract ArbiterEscrow {
 
     address public buyer;
     address public seller;
-    address public arbiter; // neutral third party — cannot be a party
+    address public arbiter; // neutral third party - cannot be a party
     uint256 public amount;
     State public state;
 
@@ -52,11 +52,11 @@ contract ArbiterEscrow {
         state = State.Funded;
     }
 
-    // TODO: resolve — arbiter picks the winner; credit accounting ONLY
+    // TODO: resolve - arbiter picks the winner; credit accounting ONLY
     function resolve(Outcome outcome) external {
     }
 
-    // TODO: withdraw — a credited party pulls their ETH
+    // TODO: withdraw - a credited party pulls their ETH
     function withdraw() external {
     }
 

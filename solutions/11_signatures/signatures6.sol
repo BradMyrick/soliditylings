@@ -19,7 +19,7 @@ contract NonceClaims {
 
         if (ecrecover(digest, v, r, s) != authority) revert BadSigner();
 
-        used[digest] = true; // EFFECT — consume before the interaction
+        used[digest] = true; // EFFECT - consume before the interaction
 
         payable(msg.sender).transfer(address(this).balance); // INTERACTION
     }

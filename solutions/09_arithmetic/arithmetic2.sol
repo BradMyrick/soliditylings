@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 
 contract Summer {
     function sumTo(uint8 n) external pure returns (uint256 total) {
-        uint256 acc = 0; // wide accumulator — cannot overflow mid-loop
+        uint256 acc = 0; // wide accumulator - cannot overflow mid-loop
         for (uint256 i = 1; i <= n; i++) {
             acc += i;
         }

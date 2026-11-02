@@ -4,7 +4,7 @@ pragma solidity ^0.8.38;
 // errors1
 // Since Solidity 0.8.4 you can revert with custom errors instead of
 // require strings. They are cheaper (4-byte selector vs a full string in
-// calldata and bytecode) and they carry typed data — an auditor can
+// calldata and bytecode) and they carry typed data - an auditor can
 // grep for exactly which failure fired.
 //
 //   error Unauthorized(address caller);

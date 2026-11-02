@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// signatures9 — THE VERIFIER (capstone of the signature arc)
+// signatures9 - THE VERIFIER (capstone of the signature arc)
 // This is the real shape of the escrow interview component: "The
 // contracts check our signature, the audience, and the expiry before
 // anything moves." Piece by piece:
 //
-//   signature — EIP-191 personal-sign digest, recovered with ecrecover,
+//   signature - EIP-191 personal-sign digest, recovered with ecrecover,
 //               must equal the trusted verifier address
-//   audience  — the digest binds (escrowId, recipient): a verdict for
+//   audience  - the digest binds (escrowId, recipient): a verdict for
 //               one escrow can never release another, and a verdict for
 //               Alice can never pay Bob
-//   expiry    — the deadline is inside the signed payload and enforced
+//   expiry    - the deadline is inside the signed payload and enforced
 //               against block.timestamp
-//   replay    — each escrow's verdict is consumable exactly once
+//   replay    - each escrow's verdict is consumable exactly once
 //
-// Everything runs through `verify` — no storage moves, no ETH moves,
+// Everything runs through `verify` - no storage moves, no ETH moves,
 // until every check passes. You own this path onchain.
 //
 // TODO: Complete `verify` with the three checks and the digest
@@ -69,7 +69,7 @@ contract Verifier {
         // TODO 3: recover the signer over the digest; revert
         //         NotVerifier if it is not the trusted verifier
 
-        // TODO 4: consume — mark this escrow's verdict spent
+        // TODO 4: consume - mark this escrow's verdict spent
 
         return true;
     }
@@ -77,7 +77,7 @@ contract Verifier {
 
 contract Signatures9Test is Test {
     Verifier verifier;
-    uint256 constant VERIFIER_PK = 0xCE0; // "ceo" — the off-chain signer
+    uint256 constant VERIFIER_PK = 0xCE0; // "ceo" - the off-chain signer
     address verifierAddr;
 
     function setUp() public {
@@ -127,7 +127,7 @@ contract Signatures9Test is Test {
     }
 
     function testAudienceIsBound() public {
-        // Signature names recipient X — presenting it for recipient Y
+        // Signature names recipient X - presenting it for recipient Y
         // changes the digest, so it can't pass the verifier check.
         uint256 deadline = block.timestamp + 1 hours;
         bytes memory sig = sign(1, address(0xA), 1 ether, deadline);

@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 
 contract PersonalSign {
     function prefixed(bytes32 inner) external pure returns (bytes32) {
-        // The prefix is packed as RAW BYTES — never pre-hashed.
+        // The prefix is packed as RAW BYTES - never pre-hashed.
         return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", inner));
     }
 }

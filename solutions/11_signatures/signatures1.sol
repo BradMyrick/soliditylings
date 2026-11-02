@@ -32,9 +32,9 @@ contract Signatures1Test is Test {
     }
 
     function testGarbageReturnsZero() public {
-        // v=0 is not a valid recovery id — ecrecover returns
+        // v=0 is not a valid recovery id - ecrecover returns
         // address(0) rather than reverting. (Careful: v=27 with junk
-        // r/s still recovers SOME address — junk alone isn't invalid!)
+        // r/s still recovers SOME address - junk alone isn't invalid!)
         address got = target.recover(bytes32(0), 0, bytes32(uint256(1)), bytes32(uint256(2)));
         assertEq(got, address(0), "invalid v recovers address(0)");
     }

@@ -4,13 +4,13 @@ pragma solidity ^0.8.38;
 // functions3
 // Mutability keywords are promises to the compiler:
 //
-//   pure  — "I will not even READ state"
-//   view  — "I may read state, but never write it"
-//   (none) — "I may write state"
+//   pure  - "I will not even READ state"
+//   view  - "I may read state, but never write it"
+//   (none) - "I may write state"
 //
 // `getValue` is marked `pure`, yet it reads the state variable `value`.
-// The compiler catches the lie. Reading state is allowed — writing is
-// not — so one keyword up the ladder fixes this.
+// The compiler catches the lie. Reading state is allowed - writing is
+// not - so one keyword up the ladder fixes this.
 //
 // TODO: Change the mutability so the function compiles and returns 42.
 

@@ -4,7 +4,7 @@ pragma solidity ^0.8.38;
 // signatures1
 // Ethereum signed messages rest on ONE precompile: `ecrecover`.
 // Give it a 32-byte digest plus the signature's (v, r, s) and it
-// returns the address whose private key produced that signature —
+// returns the address whose private key produced that signature -
 // or address(0) if the inputs don't form a valid signature.
 //
 //   address signer = ecrecover(digest, v, r, s);
@@ -30,7 +30,7 @@ contract Recover {
 contract Signatures1Test is Test {
     Recover target;
 
-    // Any private key works in tests — this one is a throwaway.
+    // Any private key works in tests - this one is a throwaway.
     uint256 constant PK = 0xA11CE;
     address public signer; // derived from PK
 
@@ -47,9 +47,9 @@ contract Signatures1Test is Test {
     }
 
     function testGarbageReturnsZero() public {
-        // v=0 is not a valid recovery id — ecrecover returns
+        // v=0 is not a valid recovery id - ecrecover returns
         // address(0) rather than reverting. (Careful: v=27 with junk
-        // r/s still recovers SOME address — junk alone isn't invalid!)
+        // r/s still recovers SOME address - junk alone isn't invalid!)
         address got = target.recover(bytes32(0), 0, bytes32(uint256(1)), bytes32(uint256(2)));
         assertEq(got, address(0), "invalid v recovers address(0)");
     }

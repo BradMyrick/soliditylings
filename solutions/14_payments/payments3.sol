@@ -8,7 +8,7 @@ contract Dispatcher {
 
     uint256 public receivedCount;
 
-    // Every call that matches no declared function lands here —
+    // Every call that matches no declared function lands here -
     // revert LOUDLY with the raw calldata for the runbook.
     fallback() external payable {
         revert UnknownCall(msg.data);

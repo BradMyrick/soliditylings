@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// testing3 — cheatcodes
+// testing3 - cheatcodes
 // Foundry's cheatcodes are your time machine, impersonation service,
 // and bank: prank (impersonate), deal (set balances), warp (time
 // travel). They're how you test paths that would need victims in
@@ -9,9 +9,9 @@ pragma solidity ^0.8.38;
 //
 // TODO: Complete the three tests using cheatcodes (the contract is
 // correct):
-//   1. someone ELSE pays — prove their credit lands in their name
-//   2. the test contract needs ETH it doesn't have — give it some, then deposit
-//   3. time passes — prove the lock expires at the right moment
+//   1. someone ELSE pays - prove their credit lands in their name
+//   2. the test contract needs ETH it doesn't have - give it some, then deposit
+//   3. time passes - prove the lock expires at the right moment
 
 import "forge-std/Test.sol";
 
@@ -46,7 +46,7 @@ contract Testing3Test is Test {
 
         // TODO: make the NEXT call come from `stranger` with 1 ether
 
-        fail("unreachable — prank the stranger's deposit first");
+        fail("unreachable - prank the stranger's deposit first");
     }
 
     function testFundTheTestContract() public {
@@ -54,7 +54,7 @@ contract Testing3Test is Test {
 
         // TODO: give the test contract 2 ether
 
-        fail("unreachable — deal yourself funds first");
+        fail("unreachable - deal yourself funds first");
     }
 
     function testLockExpires() public {
@@ -62,7 +62,7 @@ contract Testing3Test is Test {
 
         // TODO: advance time past the lock, then withdraw successfully
 
-        fail("unreachable — warp past the unlock time first");
+        fail("unreachable - warp past the unlock time first");
     }
 
     receive() external payable {}

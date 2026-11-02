@@ -6,8 +6,8 @@ pragma solidity ^0.8.38;
 //
 //   struct User { string username; uint256 score; }
 //
-// Structs can live in storage (state), memory (locals), or calldata —
-// and you construct one positionally: `User("alice", 10)` — or by name:
+// Structs can live in storage (state), memory (locals), or calldata -
+// and you construct one positionally: `User("alice", 10)` - or by name:
 // `User({username: "alice", score: 10})`.
 //
 // TODO: 1. Define a struct named `User` with `string username` and

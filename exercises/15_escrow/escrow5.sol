@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// escrow5 — the race: release vs refund
+// escrow5 - the race: release vs refund
 // Two exits, one pot. When both are legal at once, whoever's
-// transaction lands first wins and the other MUST bounce — there is
+// transaction lands first wins and the other MUST bounce - there is
 // no world where both the seller AND the buyer get paid. The state
 // transition is the lock: whichever path flips state first wins the
 // race by construction.
 //
-// This exercise is escrow4 with the refund guard removed — one line
+// This exercise is escrow4 with the refund guard removed - one line
 // of audit-diff between "safe" and "drained twice".
 //
 // TODO: Add the missing guard to `refund` so a released escrow can
@@ -46,7 +46,7 @@ contract RaceEscrow {
         payable(e.seller).transfer(e.amount);
     }
 
-    // MISSING its state guard — the double-pay window
+    // MISSING its state guard - the double-pay window
     function refund(bytes32 id) external {
         Escrow storage e = escrows[id];
 

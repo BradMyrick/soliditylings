@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// testing4 — signing in tests
+// testing4 - signing in tests
 // When a contract gates an action behind a signature, your test needs
 // to BE the signer. `vm.addr(pk)` derives the address,
 // `vm.sign(pk, digest)` produces (v, r, s). Together they turn any
-// test into the off-chain signer — no wallet, no network.
+// test into the off-chain signer - no wallet, no network.
 //
-// TODO: Complete `testReleaseWithValidSig` — sign the digest the way
+// TODO: Complete `testReleaseWithValidSig` - sign the digest the way
 // `release` computes it, and pass the signature through.
 
 import "forge-std/Test.sol";

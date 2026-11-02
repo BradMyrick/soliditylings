@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// signatures7 — signature malleability
+// signatures7 - signature malleability
 // secp256k1 has a symmetry: for any signature (v, r, s), the tuple
 // (v', r, n-s) verifies against the SAME digest. Both are "valid",
-// but they have different bytes — a dedup keyed on raw signature
+// but they have different bytes - a dedup keyed on raw signature
 // bytes sees two different signatures while your accounting sees one
 // authorization. That's a replay with extra steps.
 //
@@ -13,7 +13,7 @@ pragma solidity ^0.8.38;
 // the library.)
 //
 // TODO: In `verify`, reject signatures where s > secp256k1n / 2 with
-// `Malleable()`. The test forges the flipped variant — only the
+// `Malleable()`. The test forges the flipped variant - only the
 // bounds check stops it.
 
 import "forge-std/Test.sol";
@@ -70,7 +70,7 @@ contract Signatures7Test is Test {
             v = v == 27 ? 28 : 27;
         }
 
-        // Flip to the high-s variant — still a "valid" ECDSA signature.
+        // Flip to the high-s variant - still a "valid" ECDSA signature.
         bytes32 sFlipped = bytes32(N - uint256(s));
         uint8 vFlipped = v == 27 ? 28 : 27;
 

@@ -21,7 +21,7 @@ contract Sweepable {
         totalDeposits += msg.value;
     }
 
-    // FIXED: sweeps only the protocol's OWN excess — user deposits are
+    // FIXED: sweeps only the protocol's OWN excess - user deposits are
     // mathematically out of reach.
     function sweep(address to) external onlyOwner {
         uint256 excess = address(this).balance - totalDeposits;

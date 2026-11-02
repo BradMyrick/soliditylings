@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// ownership5 — renouncing ownership
+// ownership5 - renouncing ownership
 // The endgame of trust minimization: an owner whose job is DONE. Once
 // parameters are set, an owner is pure risk (key leak = exploit, not
-// rescue). Renouncing sets owner to address(0) — after which every
+// rescue). Renouncing sets owner to address(0) - after which every
 // onlyOwner path is permanently dead. DeFi drama has hinged on exactly
 // this: renounced too early (can't fix bugs) vs never (can rug).
 //
-// TODO: Implement `renounceOwnership` — only the owner may press the
+// TODO: Implement `renounceOwnership` - only the owner may press the
 // button, and it must set owner to address(0) and emit Renounced().
 // (Irreversible by design: address(0) can never sign.)
 

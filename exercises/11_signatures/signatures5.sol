@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// signatures5 — EIP-712 part 2: hashStruct + the full digest
+// signatures5 - EIP-712 part 2: hashStruct + the full digest
 // A typed message hashes its fields structurally:
 //
 //   TYPEHASH   = keccak256("Verdict(uint256 escrowId,address recipient,uint256 amount)")
@@ -63,7 +63,7 @@ contract Signatures5Test is Test {
         bytes32 d = target.digest(domain, 7, address(0xBEEF), 1 ether);
 
         // The signer signs the digest; ecrecover over the SAME digest
-        // must return the signer — that's the whole verification game.
+        // must return the signer - that's the whole verification game.
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(PK, d);
         assertEq(ecrecover(d, v, r, s), vm.addr(PK));
     }

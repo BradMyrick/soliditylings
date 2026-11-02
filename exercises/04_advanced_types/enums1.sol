@@ -2,12 +2,12 @@
 pragma solidity ^0.8.38;
 
 // enums1
-// An enum is a uint8 under the hood with named members — a cheap way to
+// An enum is a uint8 under the hood with named members - a cheap way to
 // model a state machine. Members count up from 0, and the type converts
 // explicitly to/from uint8. Perfect for escrow-style states.
 //
 // TODO: 1. Define an enum named `State` with members Pending, Active,
-//          Inactive (in that order — the order defines the numbers).
+//          Inactive (in that order - the order defines the numbers).
 //       2. In `activate`, set `currentState` to the Active member.
 
 import "forge-std/Test.sol";

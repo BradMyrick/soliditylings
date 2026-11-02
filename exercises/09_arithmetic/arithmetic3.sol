@@ -2,12 +2,12 @@
 pragma solidity ^0.8.38;
 
 // arithmetic3
-// Solidity NEVER converts numeric types implicitly — every narrowing
+// Solidity NEVER converts numeric types implicitly - every narrowing
 // is an explicit cast, and casting to a SMALLER type truncates: it
 // keeps the low bits and throws the rest away.
 //
 //   uint8(uint256(0x01FF)) == 0xFF   // the high byte is simply lost
-//   uint256(int8(-1))       == 0xFF..FF (2^256-1) — sign extends!
+//   uint256(int8(-1))       == 0xFF..FF (2^256-1) - sign extends!
 //
 // Auditors grep for every explicit cast touching user input.
 //

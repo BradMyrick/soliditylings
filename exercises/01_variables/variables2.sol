@@ -2,7 +2,7 @@
 pragma solidity ^0.8.38;
 
 // variables2
-// `address` is a 20-byte type unique to Ethereum — it holds an account
+// `address` is a 20-byte type unique to Ethereum - it holds an account
 // or contract address, and it's the type you'll use more than any other
 // when modeling who owns what.
 //

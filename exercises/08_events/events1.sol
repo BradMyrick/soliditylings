@@ -2,7 +2,7 @@
 pragma solidity ^0.8.38;
 
 // events1
-// Events are the contract's logging mechanism — written to the
+// Events are the contract's logging mechanism - written to the
 // transaction receipt (not storage), readable by off-chain indexers,
 // cheap. `indexed` marks up to three parameters as searchable filters.
 //

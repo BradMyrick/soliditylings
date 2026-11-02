@@ -3,7 +3,7 @@ pragma solidity ^0.8.38;
 
 // mappings1
 // A mapping is Solidity's hash table: `mapping(KeyType => ValueType)`.
-// Every possible key exists — unset keys simply return the value type's
+// Every possible key exists - unset keys simply return the value type's
 // zero value. Keys are NOT enumerable; all you can do is read and write
 // by key. A `public` mapping gets a free getter taking the key.
 //

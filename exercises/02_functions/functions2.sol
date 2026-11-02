@@ -4,10 +4,10 @@ pragma solidity ^0.8.38;
 // functions2
 // Visibility, from most to least open:
 //
-//   public    — anyone, plus internally
-//   external  — anyone, but only from outside (cheaper for big args)
-//   internal  — this contract and its children only
-//   private   — this contract only
+//   public    - anyone, plus internally
+//   external  - anyone, but only from outside (cheaper for big args)
+//   internal  - this contract and its children only
+//   private   - this contract only
 //
 // Right now `increment` has no visibility at all, so it doesn't compile.
 //
@@ -32,7 +32,7 @@ contract Functions2Test is Test {
     }
 
     function testAnyoneCanCall() public {
-        // A stranger calls through a low-level call — this only works
+        // A stranger calls through a low-level call - this only works
         // if `increment` is reachable from outside the contract.
         (bool success,) = address(target).call(abi.encodeWithSignature("increment()"));
         assertTrue(success, "increment() must be callable from outside");

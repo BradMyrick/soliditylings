@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// security_access — AUDIT FINDING: "unprotected privileged function"
-// The most common critical in audits isn't clever — it's a function
+// security_access - AUDIT FINDING: "unprotected privileged function"
+// The most common critical in audits isn't clever - it's a function
 // that should have had a guard and doesn't. Parity 2017: one
 // unprotected `kill` froze 513,740 ETH forever. Default-deny: every
 // state-changing external function PROVES who may call it.
@@ -27,12 +27,12 @@ contract TipJar {
         _;
     }
 
-    // Meant to be open to everyone — tips are tips.
+    // Meant to be open to everyone - tips are tips.
     function deposit() external payable onlyOwner {
         // (funds accepted)
     }
 
-    // Meant to be owner-only — where the money goes.
+    // Meant to be owner-only - where the money goes.
     function setTreasury(address t) external {
         treasury = t;
     }

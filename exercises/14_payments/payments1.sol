@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// payments1 — send vs transfer vs call
+// payments1 - send vs transfer vs call
 // Three ways to move ETH, and the interview answer:
 //
-//   send(x)     — forwards 2300 gas stipend, returns bool
-//   transfer(x) — forwards 2300 gas stipend, reverts on failure
-//   call{value:x}("") — forwards ALL gas (63/64 rule), returns bool
+//   send(x)     - forwards 2300 gas stipend, returns bool
+//   transfer(x) - forwards 2300 gas stipend, reverts on failure
+//   call{value:x}("") - forwards ALL gas (63/64 rule), returns bool
 //
-// send/transfer were "safe" because 2300 gas can't reenter — but that
+// send/transfer were "safe" because 2300 gas can't reenter - but that
 // gas cap is now a LIABILITY: EIP-1884 raised sload cost, so a
 // recipient whose fallback touches storage runs out of gas and your
 // transfer bricks (the Istanbul 2019 "force-feeding" incident family).
 // Best practice today: call + checks-effects-interactions + explicit
 // return-value check.
 //
-// TODO: Implement `withdrawWithCall` — use .call, honor
+// TODO: Implement `withdrawWithCall` - use .call, honor
 // checks-effects-interactions, and revert "Transfer failed" when the
 // call fails.
 
@@ -35,7 +35,7 @@ contract Payer {
         payable(msg.sender).transfer(amount);
     }
 
-    // TODO: the modern path — .call, CEI, checked return value
+    // TODO: the modern path - .call, CEI, checked return value
     function withdrawWithCall() external {
     }
 
@@ -64,7 +64,7 @@ contract Payments1Test is Test {
     function testTransferBricksOnFancyWallet() public {
         payer.credit(address(wallet), 1 ether);
         vm.prank(address(wallet));
-        vm.expectRevert(); // 2300 gas < one sstore — transfer reverts
+        vm.expectRevert(); // 2300 gas < one sstore - transfer reverts
         payer.withdrawWithTransfer();
     }
 

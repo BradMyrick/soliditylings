@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// escrow1 — the state machine
+// escrow1 - the state machine
 // Every escrow is a state machine with GUARDED transitions:
 //
 //   Empty → Funded → Released
@@ -9,19 +9,19 @@ pragma solidity ^0.8.38;
 //
 // The guards ARE the security: an action is legal in exactly one
 // state. A missing guard is how "release twice" and "refund after
-// release" happen — auditors read state machines first.
+// release" happen - auditors read state machines first.
 //
 // TODO: Complete `release`: only legal from Funded, pays the seller,
-// lands in Released. `refund` is written — read it, then mirror it.
+// lands in Released. `refund` is written - read it, then mirror it.
 
 import "forge-std/Test.sol";
 
 contract SimpleEscrow {
     enum State {
-        Empty, // 0 — nothing here
-        Funded, // 1 — buyer's ETH is locked
-        Released, // 2 — seller paid
-        Refunded // 3 — buyer made whole
+        Empty, // 0 - nothing here
+        Funded, // 1 - buyer's ETH is locked
+        Released, // 2 - seller paid
+        Refunded // 3 - buyer made whole
     }
 
     address public buyer;

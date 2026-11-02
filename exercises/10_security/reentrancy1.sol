@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// reentrancy1 — SECURITY
+// reentrancy1 - SECURITY
 // The classic. `withdraw` sends ETH to the caller BEFORE zeroing their
 // balance (interaction before effects). A malicious contract's receive
 // hook re-enters `withdraw` while the balance is still nonzero and
 // drains the vault. This bug emptied The DAO in 2016 and forked Ethereum.
 //
 // The fix is the checks-effects-interactions pattern:
-//   1. CHECKS    — validate the caller's balance
-//   2. EFFECTS   — update your state FIRST
-//   3. INTERACTIONS — then, and only then, touch external addresses
+//   1. CHECKS    - validate the caller's balance
+//   2. EFFECTS   - update your state FIRST
+//   3. INTERACTIONS - then, and only then, touch external addresses
 //
 // TODO: Reorder `withdraw` so no re-entrant call can see stale state.
-// The Attacker contract below will keep trying — make sure it fails.
+// The Attacker contract below will keep trying - make sure it fails.
 
 import "forge-std/Test.sol";
 
@@ -60,7 +60,7 @@ contract Reentrancy1Test is Test {
     Vault vault;
     Attacker attacker;
 
-    // The vault pays out with a raw call — to receive ETH that way, a
+    // The vault pays out with a raw call - to receive ETH that way, a
     // contract needs a receive function. (Test contracts are contracts!)
     receive() external payable {}
 
@@ -77,7 +77,7 @@ contract Reentrancy1Test is Test {
 
     function testAttackReverts() public {
         // With CEI applied, the re-entrant withdraw inside receive()
-        // finds a zeroed balance and reverts — which reverts the whole
+        // finds a zeroed balance and reverts - which reverts the whole
         // attack transaction.
         vm.expectRevert();
         attacker.attack{value: 1 ether}();

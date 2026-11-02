@@ -41,7 +41,7 @@ contract RecoveryVault {
         payable(to).transfer(amount);
     }
 
-    // FIXED: the exit is NEVER pausable — users can always leave
+    // FIXED: the exit is NEVER pausable - users can always leave
     function withdraw() external {
         uint256 amount = balances[msg.sender];
         balances[msg.sender] = 0;

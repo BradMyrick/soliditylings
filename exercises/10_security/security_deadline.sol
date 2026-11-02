@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// security_deadline — AUDIT FINDING: "missing deadline on signed action"
+// security_deadline - AUDIT FINDING: "missing deadline on signed action"
 // The mempool is adversarial: a signed or submitted action sits in
 // public view where bots and backlogged blocks can delay it. Without a
 // deadline, "buy at this price" or "release at this verdict" can
 // execute at whatever world state eventually includes it. This is the
-// front-running family — the defense is making the transaction
+// front-running family - the defense is making the transaction
 // EXPIRE.
 //
 // TODO: `claimWithPermit` must revert with `Expired()` when
@@ -53,4 +53,6 @@ contract DeadlineTest is Test {
         vm.expectRevert(ClaimPool.Expired.selector);
         pool.claimWithPermit(1 ether, block.timestamp - 1);
     }
+
+    receive() external payable {}
 }

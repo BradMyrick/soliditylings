@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// signatures4 — EIP-712 part 1: the domain separator
+// signatures4 - EIP-712 part 1: the domain separator
 // Typed structured data signing (EIP-712) makes signatures READABLE in
-// wallets and — critically — BOUND to a context. The domain separator
+// wallets and - critically - BOUND to a context. The domain separator
 // scopes every signature to (name, version, chainId, verifyingContract):
 // a signature for Escrow v1 on Base can't be replayed against Escrow v2
 // or the same contract on Ethereum mainnet.

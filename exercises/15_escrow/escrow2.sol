@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// escrow2 — many escrows, one contract
+// escrow2 - many escrows, one contract
 // One contract, many deals: the mapping-keyed pattern that every
 // factory/marketplace/escrow system uses. A bytes32 id keeps escrows
-// independent — deal A's release can never touch deal B — and the
+// independent - deal A's release can never touch deal B - and the
 // counter guarantees uniqueness.
 //
 //   struct Escrow { address buyer; address seller; uint256 amount; State state; }
 //   mapping(bytes32 => Escrow) public escrows;
 //
-// TODO: Implement `create` — record a NEW escrow under a fresh id,
+// TODO: Implement `create` - record a NEW escrow under a fresh id,
 // pull the buyer's ETH in, and emit EscrowCreated. Return the id.
 
 import "forge-std/Test.sol";

@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// testing1 — revert assertions
-// The contract below is CORRECT. Your job is to finish its test suite —
+// testing1 - revert assertions
+// The contract below is CORRECT. Your job is to finish its test suite -
 // because in this curriculum (and in every audit), proving the bad
 // path reverts is as important as proving the happy path works.
 //
 // Precise revert assertions beat generic ones:
 //
-//   vm.expectRevert();                          // anything reverts — weak
-//   vm.expectRevert(Vault.Insufficient.selector); // THIS error — strong
+//   vm.expectRevert();                          // anything reverts - weak
+//   vm.expectRevert(Vault.Insufficient.selector); // THIS error - strong
 //
 // TODO: Complete the two tests. Assert the custom error (by selector)
 // for the underflow case, and the string for the zero case.
@@ -48,7 +48,7 @@ contract Testing1Test is Test {
     function testWithdrawMoreThanBalance() public {
         vault.deposit{value: 1 ether}();
 
-        // TODO: assert the Insufficient error reverts — with its args
+        // TODO: assert the Insufficient error reverts - with its args
         // (requested, available) encoded, forge matches it exactly:
         // vm.expectRevert(abi.encodeWithSelector(...selector, 2 ether, 1 ether))
         vault.withdraw(2 ether);

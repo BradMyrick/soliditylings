@@ -2,18 +2,18 @@
 pragma solidity ^0.8.38;
 
 // signatures2
-// You never sign "a message" — you sign a 32-byte digest of it. The
+// You never sign "a message" - you sign a 32-byte digest of it. The
 // standard tool is:
 //
-//   keccak256(abi.encode(a, b, ...))      // fixed-size args, padded — safe
-//   keccak256(abi.encodePacked(a, b, ...)) // tight packing — careful!
+//   keccak256(abi.encode(a, b, ...))      // fixed-size args, padded - safe
+//   keccak256(abi.encodePacked(a, b, ...)) // tight packing - careful!
 //
 // encodePacked is cheaper but DANGEROUS with two adjacent dynamic
 // values: ("a","bc") and ("ab","c") pack to the same bytes. Rule for
 // interviews: use abi.encode unless every argument is fixed-size.
 //
-// TODO: Implement `hashAction` — keccak256 over abi.encode of (who,
-// amount, action) — and `safePacked` — keccak256 over the packed
+// TODO: Implement `hashAction` - keccak256 over abi.encode of (who,
+// amount, action) - and `safePacked` - keccak256 over the packed
 // encoding of two uint128s (fixed-size, so packing is collision-free).
 
 import "forge-std/Test.sol";
@@ -28,7 +28,7 @@ contract Hasher {
         return bytes32(0); // REPLACE ME
     }
 
-    // TODO: keccak of the tightly-packed pair (a, b) — both fixed-size
+    // TODO: keccak of the tightly-packed pair (a, b) - both fixed-size
     function safePacked(uint128 a, uint128 b) external pure returns (bytes32) {
         return bytes32(0); // REPLACE ME
     }
