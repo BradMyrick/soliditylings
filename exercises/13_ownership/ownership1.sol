@@ -88,4 +88,6 @@ contract Ownership1Test is Test {
         vault.unpause();
         assertTrue(vault.paused());
     }
+
+    receive() external payable {}
 }

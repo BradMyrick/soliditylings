@@ -36,6 +36,8 @@ contract NonceClaims {
     }
 
     receive() external payable {}
+
+    receive() external payable {}
 }
 
 contract Signatures6Test is Test {
@@ -70,4 +72,6 @@ contract Signatures6Test is Test {
         vm.expectRevert(NonceClaims.AlreadyUsed.selector);
         claims.claim(d, v, r, s); // same sig, second time
     }
+
+    receive() external payable {}
 }

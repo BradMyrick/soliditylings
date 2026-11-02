@@ -83,4 +83,6 @@ contract Ownership4Test is Test {
         vm.expectRevert(); // onlyOwner
         vault.sweep(address(0xBA0BAD));
     }
+
+    receive() external payable {}
 }

@@ -54,4 +54,6 @@ contract Payments2Test is Test {
         assertTrue(bank.solvent(), "surplus must not read as insolvency");
         assertEq(address(bank).balance, 8 ether);
     }
+
+    receive() external payable {}
 }
