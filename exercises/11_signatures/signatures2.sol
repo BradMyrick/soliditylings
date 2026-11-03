@@ -9,8 +9,8 @@ pragma solidity ^0.8.38;
 //   keccak256(abi.encodePacked(a, b, ...)) // tight packing - careful!
 //
 // encodePacked is cheaper but DANGEROUS with two adjacent dynamic
-// values: ("a","bc") and ("ab","c") pack to the same bytes. Rule for
-// interviews: use abi.encode unless every argument is fixed-size.
+// values: ("a","bc") and ("ab","c") pack to the same bytes. Rule of
+// thumb: use abi.encode unless every argument is fixed-size.
 //
 // TODO: Implement `hashAction` - keccak256 over abi.encode of (who,
 // amount, action) - and `safePacked` - keccak256 over the packed

@@ -8,7 +8,7 @@ pragma solidity ^0.8.38;
 // block.timestamp. Signers bound their authorization in time; the
 // chain enforces the bound.
 //
-// Block timestamp notes for the interview: it's set by the block
+// Block timestamp notes: it's set by the block
 // proposer, monotonic within a chain, and can drift ~a few seconds -
 // fine for deadlines, never fine for randomness.
 //

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.38;
 
 // escrow4 - self-serve refunds ("refunds that work without us")
-// The Saifuro spec: refunds must work WITHOUT the platform. If the
+// The spec: refunds must work WITHOUT the platform. If the
 // verdict never comes, the buyer isn't stranded waiting on an
 // operator - the CHAIN lets them out. The pattern: a deadline baked
 // in at funding, and a permissionless refund path anyone can trigger

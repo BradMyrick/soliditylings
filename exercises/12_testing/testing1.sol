@@ -11,8 +11,11 @@ pragma solidity ^0.8.38;
 //   vm.expectRevert();                          // anything reverts - weak
 //   vm.expectRevert(Vault.Insufficient.selector); // THIS error - strong
 //
-// TODO: Complete the two tests. Assert the custom error (by selector)
-// for the underflow case, and the string for the zero case.
+// The fail(...) calls below mark a test as incomplete - a finished
+// test never contains them. Delete each one as you finish its TODO.
+//
+// TODO: Complete the two tests. Assert each custom error (by selector),
+// encoding the exact (requested, available) args for Insufficient.
 
 import "forge-std/Test.sol";
 
@@ -53,13 +56,13 @@ contract Testing1Test is Test {
         // vm.expectRevert(abi.encodeWithSelector(...selector, 2 ether, 1 ether))
         vault.withdraw(2 ether);
 
-        fail("unreachable if you asserted the revert above");
+        fail("TODO incomplete - arm the revert assertion above, then DELETE this line");
     }
 
     function testWithdrawZero() public {
         // TODO: assert the ZeroAmount error reverts
         vault.withdraw(0);
 
-        fail("unreachable if you asserted the revert above");
+        fail("TODO incomplete - arm the revert assertion above, then DELETE this line");
     }
 }

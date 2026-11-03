@@ -39,7 +39,7 @@ contract VerdictEscrow {
     }
 
     // ---------- storage ----------
-    address public immutable verifier; // the CTO's signing key (off-chain)
+    address public immutable verifier; // the trusted off-chain signing key
     address public operator; // platform: may pause, may NEVER move funds
     bool public paused;
 
@@ -74,7 +74,7 @@ contract VerdictEscrow {
                 keccak256(
                     "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
                 ),
-                keccak256(bytes("SaifuroEscrow")),
+                keccak256(bytes("SoliditylingsEscrow")),
                 keccak256(bytes("1")),
                 block.chainid,
                 address(this)
@@ -123,7 +123,7 @@ contract VerdictEscrow {
     }
 
     // ---------- TODO: the verdict release ----------
-    // The CTO's key signs verdictDigest(id, seller, escrowAmount, deadline).
+    // The verifier's key signs verdictDigest(id, seller, escrowAmount, deadline).
     // Note the digest binds the ESCROW'S OWN amount - a verdict always
     // names the full deal, so partial releases cannot strand funds.
     // Enforce, in order: pause, status, replay, expiry, signature -

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.38;
 
 // ownership4 - bounded administration ("sweep safely")
-// The Saifuro requirement, verbatim: "no path in which Saifuro can
+// The requirement, verbatim: "no path in which the platform can
 // move a counterparty's money." Escrows still need an operational
 // sweep (rounding dust, misplaced transfers) - the audited shape is a
 // sweep that mathematically CANNOT exceed the protocol's own excess:

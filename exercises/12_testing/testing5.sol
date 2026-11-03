@@ -91,6 +91,6 @@ contract Testing5Test is Test {
 
         // TODO: deal, deposit, and assert both balance and `deposited`
 
-        fail("unreachable if your assertions held");
+        fail("TODO incomplete - write your assertions above, then DELETE this line");
     }
 }

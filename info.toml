@@ -110,6 +110,14 @@ Reads chain the same way they write: `a[b][c]`."""
 
 # ===== 04 advanced types =====
 [[exercises]]
+name = "enums1"
+path = "exercises/04_advanced_types/enums1.sol"
+mode = "test"
+hint = """
+`enum State { Pending, Active, Inactive }` numbers its members 0, 1, 2.
+Assign with `State.Active` — the member's name prefixed by the type."""
+
+[[exercises]]
 name = "structs1"
 path = "exercises/04_advanced_types/structs1.sol"
 mode = "test"
@@ -117,14 +125,6 @@ hint = """
 A struct definition lists `TYPE NAME;` fields inside braces, at
 contract level. Construct one positionally like a function call:
 `User(_username, _score)`."""
-
-[[exercises]]
-name = "enums1"
-path = "exercises/04_advanced_types/enums1.sol"
-mode = "test"
-hint = """
-`enum State { Pending, Active, Inactive }` numbers its members 0, 1, 2.
-Assign with `State.Active` — the member's name prefixed by the type."""
 
 [[exercises]]
 name = "errors1"
@@ -240,14 +240,12 @@ Narrowing truncates; widening (uint128 → uint256) is always safe."""
 
 # ===== 10 security =====
 [[exercises]]
-name = "reentrancy1"
-path = "exercises/10_security/reentrancy1.sol"
+name = "security_access"
+path = "exercises/10_security/security_access.sol"
 mode = "test"
 hint = """
-checks → effects → interactions. The external `call` must be the LAST
-thing that happens. Ask yourself: if the attacker's receive() ran
-again right after the call, what state would it see? Make sure it
-already sees a zeroed balance."""
+Default-deny: read each function's comment about who it's FOR, then
+check which one carries the wrong modifier. Only one is backwards."""
 
 [[exercises]]
 name = "security_txorigin"
@@ -257,15 +255,6 @@ hint = """
 tx.origin is the EOA that started the whole transaction chain;
 msg.sender is the immediate caller. Wallets authenticate the DIRECT
 caller — one keyword swap."""
-
-[[exercises]]
-name = "security_delegatecall"
-path = "exercises/10_security/security_delegatecall.sol"
-mode = "test"
-hint = """
-delegatecall writes through YOUR slots using the LIBRARY's layout.
-The library keeps `num` in its slot 0 — so `num` must also be the
-FIRST thing Storage declares. Declaration order IS slot order."""
 
 [[exercises]]
 name = "security_unchecked_call"
@@ -286,12 +275,23 @@ passed the signed deadline — one if-statement with the Expired()
 revert before anything else runs."""
 
 [[exercises]]
-name = "security_access"
-path = "exercises/10_security/security_access.sol"
+name = "security_delegatecall"
+path = "exercises/10_security/security_delegatecall.sol"
 mode = "test"
 hint = """
-Default-deny: read each function's comment about who it's FOR, then
-check which one carries the wrong modifier. Only one is backwards."""
+delegatecall writes through YOUR slots using the LIBRARY's layout.
+The library keeps `num` in its slot 0 — so `num` must also be the
+FIRST thing Storage declares. Declaration order IS slot order."""
+
+[[exercises]]
+name = "security_reentrancy"
+path = "exercises/10_security/security_reentrancy.sol"
+mode = "test"
+hint = """
+checks → effects → interactions. The external `call` must be the LAST
+thing that happens. Ask yourself: if the attacker's receive() ran
+again right after the call, what state would it see? Make sure it
+already sees a zeroed balance."""
 
 # ===== 11 signatures =====
 [[exercises]]
@@ -518,7 +518,7 @@ name = "escrow3"
 path = "exercises/15_escrow/escrow3.sol"
 mode = "test"
 hint = """
-Same bug as reentrancy1, new clothes: flip the state to Released
+Same bug as security_reentrancy, new clothes: flip the state to Released
 BEFORE the transfer. The guard at the top then bounces the
 re-entrant call."""
 
@@ -559,7 +559,7 @@ Work the checklist in order: paused → status → replay → expiry →
 signature, all BEFORE any effect. The digest binds id, seller,
 amount, deadline — ecrecover over verdictDigest(...) and compare
 against the immutable `verifier`. refund is escrow4 with this
-contract's names. The tests ARE the interview's acceptance
+contract's names. The tests ARE the acceptance
 criteria."""
 
 [[exercises]]
