@@ -46,6 +46,6 @@ contract Testing2Test is Test {
         // TODO: expect the Deposit event with (address(this), 1 ether)
         // TODO: then trigger it with a 1 ether deposit
 
-        fail("unreachable if you wired the emit check above");
+        fail("TODO incomplete - wire the emit check above, then DELETE this line");
     }
 }

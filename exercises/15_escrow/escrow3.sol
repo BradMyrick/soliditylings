@@ -5,7 +5,7 @@ pragma solidity ^0.8.38;
 // The release path pays an EXTERNAL address - and in an escrow, one
 // or both parties may be a CONTRACT. The Attacker below re-enters
 // `release` from its receive hook. You know this bug from
-// reentrancy1; this time it's wearing escrow clothes: state machine
+// security_reentrancy; this time it's wearing escrow clothes: state machine
 // + CEI together.
 //
 // TODO: Reorder `release` so the state transition happens BEFORE the

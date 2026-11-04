@@ -46,7 +46,7 @@ contract Testing3Test is Test {
 
         // TODO: make the NEXT call come from `stranger` with 1 ether
 
-        fail("unreachable - prank the stranger's deposit first");
+        fail("TODO incomplete - prank the stranger's deposit, then DELETE this line");
     }
 
     function testFundTheTestContract() public {
@@ -54,7 +54,7 @@ contract Testing3Test is Test {
 
         // TODO: give the test contract 2 ether
 
-        fail("unreachable - deal yourself funds first");
+        fail("TODO incomplete - deal yourself funds, then DELETE this line");
     }
 
     function testLockExpires() public {
@@ -62,7 +62,7 @@ contract Testing3Test is Test {
 
         // TODO: advance time past the lock, then withdraw successfully
 
-        fail("unreachable - warp past the unlock time first");
+        fail("TODO incomplete - warp past the unlock time, then DELETE this line");
     }
 
     receive() external payable {}

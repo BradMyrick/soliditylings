@@ -11,7 +11,7 @@ pragma solidity ^0.8.38;
 //   keccak256("PAUSER_ROLE"), keccak256("VERIFIER_ROLE")
 //
 // (OpenZeppelin's AccessControl is exactly this - you're building the
-// 20-line core so the interview answer is muscle memory.)
+// 20-line core so the pattern is muscle memory.)
 //
 // TODO: 1. Write the `onlyRole(bytes32)` modifier.
 //       2. Wire `grantRole` so only an existing holder of a role (or

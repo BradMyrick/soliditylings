@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.38;
 
-// reentrancy1 - SECURITY
+// security_reentrancy - AUDIT FINDING: "reentrancy (interaction before effects)"
 // The classic. `withdraw` sends ETH to the caller BEFORE zeroing their
 // balance (interaction before effects). A malicious contract's receive
 // hook re-enters `withdraw` while the balance is still nonzero and

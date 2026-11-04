@@ -2,8 +2,8 @@
 pragma solidity ^0.8.38;
 
 // signatures9 - THE VERIFIER (capstone of the signature arc)
-// This is the real shape of the escrow interview component: "The
-// contracts check our signature, the audience, and the expiry before
+// This is the real shape of the escrow release component: "The
+// contracts check the signature, the audience, and the expiry before
 // anything moves." Piece by piece:
 //
 //   signature - EIP-191 personal-sign digest, recovered with ecrecover,

@@ -48,7 +48,7 @@ contract Testing4Test is Test {
 
         // TODO: compute the digest, sign it with SIGNER_PK, call release
 
-        fail("unreachable if the signed release succeeded");
+        fail("TODO incomplete - sign and call release above, then DELETE this line");
     }
 
     function testBadSigRejected() public {

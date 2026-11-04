@@ -2,7 +2,7 @@
 pragma solidity ^0.8.38;
 
 // payments1 - send vs transfer vs call
-// Three ways to move ETH, and the interview answer:
+// Three ways to move ETH, and the trade-offs:
 //
 //   send(x)     - forwards 2300 gas stipend, returns bool
 //   transfer(x) - forwards 2300 gas stipend, reverts on failure

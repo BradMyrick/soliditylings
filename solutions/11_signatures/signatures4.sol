@@ -9,7 +9,7 @@ contract Domain {
             "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
         );
 
-    string public constant NAME = "SaifuroEscrow";
+    string public constant NAME = "SoliditylingsEscrow";
     string public constant VERSION = "1";
 
     function domainSeparator(uint256 chainId, address verifyingContract)
@@ -42,7 +42,7 @@ contract Signatures4Test is Test {
         bytes32 expected = keccak256(
             abi.encode(
                 target.DOMAIN_TYPEHASH(),
-                keccak256(bytes("SaifuroEscrow")),
+                keccak256(bytes("SoliditylingsEscrow")),
                 keccak256(bytes("1")),
                 chainId,
                 self
